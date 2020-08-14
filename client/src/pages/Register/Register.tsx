@@ -7,23 +7,25 @@ import {
 	CssBaseline,
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
-import { TextBox, CheckBoxWithLabel } from '../../CustomField';
-import * as loginSchema from '../../../validations/auth/login';
+import { TextBox } from '../../components/CustomField';
+import * as registerSchema from '../../validations/auth/register';
 
-const initValues: LoginField = {
+const initValues: RegisterField = {
+	username: '',
 	email: '',
 	password: '',
-	remember: false,
+	repass: '',
 };
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
 	const classes = useStyles();
+
 	return (
 		<Container className={classes.root} maxWidth="xs">
 			<CssBaseline />
 			<Formik
 				initialValues={initValues}
-				validationSchema={loginSchema.default}
+				validationSchema={registerSchema.default}
 				onSubmit={(values, { setSubmitting, resetForm }) => {
 					console.log(values);
 
@@ -33,10 +35,11 @@ const Login: React.FC = () => {
 			>
 				{({ values, isSubmitting, handleSubmit }) => (
 					<Form onSubmit={handleSubmit}>
-						<Typography variant="h5">Sign In</Typography>
+						<Typography variant="h5">Sign Up</Typography>
+						<TextBox name="username" placeholder="Username" />
 						<TextBox name="email" placeholder="Email" />
 						<TextBox type="password" name="password" placeholder="Password" />
-						<CheckBoxWithLabel name="remember" label="Remember me" />
+						<TextBox type="password" name="repass" placeholder="Re-Password" />
 						<Button
 							type="submit"
 							disabled={isSubmitting}
@@ -45,7 +48,7 @@ const Login: React.FC = () => {
 							variant="contained"
 							fullWidth
 						>
-							Sign In
+							Sign Up
 						</Button>
 						<pre>{JSON.stringify(values, null, 2)}</pre>
 					</Form>
@@ -66,4 +69,4 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default Login;
+export default Register;

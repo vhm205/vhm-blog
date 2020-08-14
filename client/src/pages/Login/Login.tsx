@@ -7,39 +7,45 @@ import {
 	CssBaseline,
 } from '@material-ui/core';
 import { Formik, Form } from 'formik';
-import { TextBox } from '../../CustomField';
-import * as registerSchema from '../../../validations/auth/register';
+import { TextBox, CheckBoxWithLabel } from '../../components/CustomField';
+import * as loginSchema from '../../validations/auth/login';
+import UserAPI from '../../services/userService';
 
-const initValues: RegisterField = {
-	username: '',
+const initValues: LoginField = {
 	email: '',
 	password: '',
-	repass: '',
+	remember: false,
 };
 
-const Register: React.FC = () => {
+const Login: React.FC = () => {
 	const classes = useStyles();
-
 	return (
 		<Container className={classes.root} maxWidth="xs">
 			<CssBaseline />
 			<Formik
 				initialValues={initValues}
-				validationSchema={registerSchema.default}
-				onSubmit={(values, { setSubmitting, resetForm }) => {
-					console.log(values);
+				validationSchema={loginSchema.default}
+				onSubmit={async (values, { setSubmitting, resetForm }) => {
+					try {
+						const user = new UserAPI();
+						const result = await user.login({
+							email: values.email,
+							password: values.password,
+						});
 
-					resetForm();
-					setSubmitting(false);
+						// resetForm();
+						// setSubmitting(false);
+					} catch (error) {
+						console.error(error, error.message);
+					}
 				}}
 			>
 				{({ values, isSubmitting, handleSubmit }) => (
 					<Form onSubmit={handleSubmit}>
-						<Typography variant="h5">Sign Up</Typography>
-						<TextBox name="username" placeholder="Username" />
+						<Typography variant="h5">Sign In</Typography>
 						<TextBox name="email" placeholder="Email" />
 						<TextBox type="password" name="password" placeholder="Password" />
-						<TextBox type="password" name="repass" placeholder="Re-Password" />
+						<CheckBoxWithLabel name="remember" label="Remember me" />
 						<Button
 							type="submit"
 							disabled={isSubmitting}
@@ -48,7 +54,7 @@ const Register: React.FC = () => {
 							variant="contained"
 							fullWidth
 						>
-							Sign Up
+							Sign In
 						</Button>
 						<pre>{JSON.stringify(values, null, 2)}</pre>
 					</Form>
@@ -69,4 +75,4 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default Register;
+export default Login;

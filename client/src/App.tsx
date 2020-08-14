@@ -7,8 +7,8 @@ import { NavBar } from './components';
 import { NotFound } from './components/errors';
 
 // Pages
-import Login from './components/pages/Login/Login';
-import Register from './components/pages/Register/Register';
+import Login from './pages/Login/Login';
+import Register from './pages/Register/Register';
 
 import { GlobalStyle } from './styles/globalStyle';
 

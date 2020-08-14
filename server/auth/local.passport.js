@@ -12,17 +12,17 @@ passport.use(
 			try {
 				const user = await UserModel.checkUserByEmail(email);
 				if (!user) {
-					return done(null, false, { message: 'User not found' });
+					return done(new Error('User not found'), false);
 				}
-
+				console.log('Something...');
 				const comparePassword = await user.comparePassword(password);
 				if (!comparePassword) {
-					return done(null, false, { message: 'Wrong password' });
+					return done(new Error('Wrong password'), false);
 				}
 
-				return done(null, user, { message: 'Logged in Successfully' });
+				done(null, user, { message: 'Logged in Successfully' });
 			} catch (error) {
-				return done(error);
+				done(error, null);
 			}
 		}
 	)

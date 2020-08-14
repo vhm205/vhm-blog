@@ -1,15 +1,11 @@
 const UserModel = require('../models/User');
-const passport = require('passport');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-
-require('../auth/local.passport');
 
 const registerPost = async (req, res) => {
 	try {
 		const { email, username, password } = req.body;
 
-		const user = await UserModel.checkUserByEmail(req.body.email);
+		const user = await UserModel.checkUserByEmail(email);
 		if (user) return res.status(400).json({ message: 'User already exists' });
 
 		const items = {
@@ -26,34 +22,39 @@ const registerPost = async (req, res) => {
 	}
 };
 
-const loginPost = async (req, res, next) => {
-	passport.authenticate('local', async (err, user, info) => {
-		try {
-			if (err || !user) {
-				const error = new Error('An Error occurred');
-				return next(error);
-			}
+const loginPost = async (req, res) => {
+	const user = req.user;
+	req.login(user, { session: false }, async (err) => {
+		if (err) return res.status(500).json(err);
 
-			req.login(user, { session: false }, async (err) => {
-				if (err) return next(err);
+		const dataToken = { id: user._id };
+		const refreshToken = await user.generateRefreshToken(dataToken);
+		const token = await user.generateToken(dataToken);
+		return res.status(200).json({
+			token: token,
+			refreshToken: refreshToken,
+		});
+	});
+};
 
-				const dataToken = {
-					id: user._id,
-					email: user.local.email,
-				};
-				const token = await jwt.sign(dataToken, process.env.JWT_SECRET);
-				return res.status(200).json({
-					message: info.message,
-					token: token,
-				});
-			});
-		} catch (error) {
-			return next(error);
-		}
-	})(req, res, next);
+const getRefreshToken = async (req, res) => {
+	try {
+		let token = req.header('authorization') || req.params.access_token;
+		token.startsWith('Bearer ') && (token = token.split(' ')[1]);
+
+		const user = await UserModel.checkTokenExists(token);
+		if (!user)
+			return res.status(400).json({ message: 'Refresh token is not exists' });
+
+		const refreshToken = await user.generateToken({ id: user._id });
+		return res.status(200).json({ token: refreshToken });
+	} catch (error) {
+		return res.status(400).json(error);
+	}
 };
 
 module.exports = {
 	registerPost,
 	loginPost,
+	getRefreshToken,
 };
