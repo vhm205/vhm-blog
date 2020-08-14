@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import queryString from 'query-string';
 import { config } from '../config/app';
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
 	baseURL: config.API_URL,
 	timeout: 5000,
 	responseType: 'json',
@@ -10,14 +10,14 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-	(config) => {
+	(config: AxiosRequestConfig) => {
 		return config;
 	},
 	(error) => error
 );
 
 api.interceptors.response.use(
-	(response) => {
+	(response: AxiosResponse<any>) => {
 		if (response && response.data) {
 			return response.data;
 		}

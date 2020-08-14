@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
 	username: { type: String, maxlength: 30, trim: true, required: true },
@@ -11,18 +12,17 @@ const UserSchema = new mongoose.Schema({
 		email: { type: String, trim: true, unique: true },
 		password: { type: String, minlength: 6 },
 		isActive: { type: Boolean, default: false },
-		verifyToken: String,
+		verifyToken: { type: String, default: null },
 	},
 	facebook: {
 		uid: String,
-		token: String,
 		email: { type: String, trim: true },
 	},
 	google: {
 		uid: String,
-		token: String,
 		email: { type: String, trim: true },
 	},
+	tokens: [{ _id: false, token: { type: String, required: true } }],
 	createdAt: { type: Number, default: Date.now },
 	updatedAt: { type: Number, default: null },
 });
@@ -38,14 +38,29 @@ UserSchema.methods = {
 	comparePassword(password) {
 		return bcrypt.compare(password, this.local.password);
 	},
+	async generateRefreshToken(data) {
+		const token = await jwt.sign(data, process.env.JWT_SECRET);
+		this.tokens = [...this.tokens, { token }];
+		await this.save();
+		return token;
+	},
+	generateToken(data) {
+		return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '5m' });
+	},
 };
 
 UserSchema.statics = {
 	createUser(items) {
 		return this.create(items);
 	},
+	findUserSafeById(id) {
+		return this.findOne({ _id: id }, { 'local.password': 0, tokens: 0 });
+	},
 	checkUserByEmail(email) {
 		return this.findOne({ 'local.email': email });
+	},
+	checkTokenExists(token) {
+		return this.findOne({ 'tokens.token': token }, { 'local.password': 0 });
 	},
 };
 
