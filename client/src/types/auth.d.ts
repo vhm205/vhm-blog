@@ -1,7 +1,10 @@
+type responseLogin = AxiosResponse & { token: string; refreshToken: string };
+
 interface LoginField {
 	email: string;
 	password: string;
 	remember: boolean;
+	message?: string;
 }
 
 interface RegisterField {
@@ -9,4 +12,5 @@ interface RegisterField {
 	email: string;
 	password: string;
 	repass: string;
+	message?: string;
 }

@@ -39,7 +39,7 @@ const loginPost = async (req, res) => {
 
 const getRefreshToken = async (req, res) => {
 	try {
-		let token = req.header('authorization') || req.params.access_token;
+		let token = req.header('authorization') || req.query.access_token;
 		token.startsWith('Bearer ') && (token = token.split(' ')[1]);
 
 		const user = await UserModel.checkTokenExists(token);

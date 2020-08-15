@@ -9,22 +9,16 @@ const api: AxiosInstance = axios.create({
 	params: (params: any) => queryString.stringify(params),
 });
 
-api.interceptors.request.use(
-	(config: AxiosRequestConfig) => {
-		return config;
-	},
-	(error) => error
-);
+api.interceptors.request.use((config: AxiosRequestConfig) => {
+	return config;
+});
 
-api.interceptors.response.use(
-	(response: AxiosResponse<any>) => {
-		if (response && response.data) {
-			return response.data;
-		}
+api.interceptors.response.use((response: AxiosResponse) => {
+	if (response && response.data) {
+		return response.data;
+	}
 
-		return response;
-	},
-	(error) => error
-);
+	return response;
+});
 
 export default api;

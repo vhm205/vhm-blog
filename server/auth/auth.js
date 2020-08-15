@@ -13,12 +13,11 @@ passport.use(
 		async (token, done) => {
 			try {
 				const user = await UserModel.findUserSafeById(token.id);
-				if (!user)
-					return res.status(404).json({ message: 'Cannot to find user' });
+				if (!user) return done(new Error('Cannot to find user'), null);
 
-				done(null, user);
+				return done(null, user);
 			} catch (error) {
-				done(error, null);
+				return done(error, null);
 			}
 		}
 	)

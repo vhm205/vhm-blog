@@ -1,4 +1,5 @@
 import React from 'react';
+import cookie from 'react-cookies';
 import {
 	Container,
 	Typography,
@@ -6,6 +7,7 @@ import {
 	makeStyles,
 	CssBaseline,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { Formik, Form } from 'formik';
 import { TextBox, CheckBoxWithLabel } from '../../components/CustomField';
 import * as loginSchema from '../../validations/auth/login';
@@ -25,22 +27,25 @@ const Login: React.FC = () => {
 			<Formik
 				initialValues={initValues}
 				validationSchema={loginSchema.default}
-				onSubmit={async (values, { setSubmitting, resetForm }) => {
+				onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
 					try {
 						const user = new UserAPI();
-						const result = await user.login({
+						const result: responseLogin = await user.login({
 							email: values.email,
 							password: values.password,
 						});
-
-						// resetForm();
-						// setSubmitting(false);
+						cookie.save('token', result.token, {});
+						cookie.save('refreshToken', result.refreshToken, {});
+						console.log('This is the result: ', result);
+						resetForm();
 					} catch (error) {
-						console.error(error, error.message);
+						setErrors(error.response.data);
+					} finally {
+						setSubmitting(false);
 					}
 				}}
 			>
-				{({ values, isSubmitting, handleSubmit }) => (
+				{({ values, errors, isSubmitting, handleSubmit }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5">Sign In</Typography>
 						<TextBox name="email" placeholder="Email" />
@@ -56,7 +61,9 @@ const Login: React.FC = () => {
 						>
 							Sign In
 						</Button>
+						{errors.message && <Alert severity="error">{errors.message}</Alert>}
 						<pre>{JSON.stringify(values, null, 2)}</pre>
+						<pre>{JSON.stringify(errors, null, 2)}</pre>
 					</Form>
 				)}
 			</Formik>
