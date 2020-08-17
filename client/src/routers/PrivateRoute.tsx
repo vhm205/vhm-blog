@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, RouteProps, Redirect } from 'react-router-dom';
 import { isAuthenticated } from '../utils';
 
-const PublicRoute: React.FC<RouteProps & { component: any }> = ({
+const PrivateRoute: React.FC<RouteProps & { component: any }> = ({
 	component: Component,
 	...rest
 }) => {
@@ -10,14 +10,14 @@ const PublicRoute: React.FC<RouteProps & { component: any }> = ({
 		<Route
 			{...rest}
 			render={(props) => {
-				if (isAuthenticated) {
-					return <Component {...props} />;
+				if (!isAuthenticated) {
+					return <Redirect to="/login" />;
 				}
 
-				return <Redirect to="/login" />;
+				return <Component {...props} />;
 			}}
 		/>
 	);
 };
 
-export default PublicRoute;
+export default PrivateRoute;

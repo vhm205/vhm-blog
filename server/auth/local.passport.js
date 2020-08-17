@@ -20,7 +20,7 @@ passport.use(
 					return done(new Error('Wrong password'), false);
 				}
 
-				return done(null, user, { message: 'Logged in Successfully' });
+				return done(null, user);
 			} catch (error) {
 				return done(error, null);
 			}

@@ -16,6 +16,7 @@ const registerPost = async (req, res) => {
 			},
 		};
 		await UserModel.createUser(items);
+
 		return res.status(201).json({ message: 'Register successfully' });
 	} catch (error) {
 		return res.status(400).json(error);
@@ -30,7 +31,9 @@ const loginPost = async (req, res) => {
 		const dataToken = { id: user._id };
 		const refreshToken = await user.generateRefreshToken(dataToken);
 		const token = await user.generateToken(dataToken);
+
 		return res.status(200).json({
+			message: 'Login Successfully',
 			token: token,
 			refreshToken: refreshToken,
 		});
@@ -53,8 +56,17 @@ const getRefreshToken = async (req, res) => {
 	}
 };
 
+const getProfile = async (req, res) => {
+	try {
+		console.log(req.user);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports = {
 	registerPost,
 	loginPost,
+	getProfile,
 	getRefreshToken,
 };

@@ -1,4 +1,9 @@
-type responseLogin = AxiosResponse & { token: string; refreshToken: string };
+type responseLogin = AxiosResponse & {
+	token: string;
+	refreshToken: string;
+	message: string;
+};
+type responseRegister = AxiosResponse & { message: string };
 
 interface LoginField {
 	email: string;

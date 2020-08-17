@@ -1,4 +1,5 @@
 import React from 'react';
+import Swal from 'sweetalert2';
 import {
 	Container,
 	Typography,
@@ -6,9 +7,12 @@ import {
 	makeStyles,
 	CssBaseline,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { TextBox } from '../../components/CustomField';
 import * as registerSchema from '../../validations/auth/register';
+import UserAPI from '../../services/userService';
 
 const initValues: RegisterField = {
 	username: '',
@@ -19,6 +23,7 @@ const initValues: RegisterField = {
 
 const Register: React.FC = () => {
 	const classes = useStyles();
+	const history = useHistory();
 
 	return (
 		<Container className={classes.root} maxWidth="xs">
@@ -26,14 +31,36 @@ const Register: React.FC = () => {
 			<Formik
 				initialValues={initValues}
 				validationSchema={registerSchema.default}
-				onSubmit={(values, { setSubmitting, resetForm }) => {
-					console.log(values);
+				onSubmit={async (values, { setSubmitting, setErrors, resetForm }) => {
+					try {
+						const { username, email, password, repass } = values;
+						const result: responseRegister = await UserAPI.register({
+							username,
+							email,
+							password,
+							repass,
+						});
+						resetForm();
 
-					resetForm();
-					setSubmitting(false);
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: result.message,
+							backdrop: 'rgba(85,85,85, .4)',
+							allowOutsideClick: false,
+							showConfirmButton: false,
+							timer: 1500,
+						}).then(() => {
+							history.push('/login');
+						});
+					} catch (error) {
+						setErrors(error.response.data);
+					} finally {
+						setSubmitting(false);
+					}
 				}}
 			>
-				{({ values, isSubmitting, handleSubmit }) => (
+				{({ errors, isSubmitting, handleSubmit }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5">Sign Up</Typography>
 						<TextBox name="username" placeholder="Username" />
@@ -50,7 +77,7 @@ const Register: React.FC = () => {
 						>
 							Sign Up
 						</Button>
-						<pre>{JSON.stringify(values, null, 2)}</pre>
+						{errors.message && <Alert severity="error">{errors.message}</Alert>}
 					</Form>
 				)}
 			</Formik>

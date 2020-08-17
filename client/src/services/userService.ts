@@ -1,12 +1,18 @@
 import api from './api';
 
 export default class UserAPI {
-	path: string;
+	path: string = '/users';
 
-	constructor() {
-		this.path = '/users';
+	constructor(token: string) {
+		api.defaults.headers.common['authorization'] = `Bearer ${token}`;
 	}
-	login(data: Omit<LoginField, 'remember'>) {
-		return api.post(`${this.path}/login`, data);
+	profile() {
+		return api.get(`${this.path}/profile`);
+	}
+	static login(data: Omit<LoginField, 'remember' | 'message'>) {
+		return api.post('/users/login', data);
+	}
+	static register(data: Omit<RegisterField, 'remember' | 'message'>) {
+		return api.post('/users/register', data);
 	}
 }
