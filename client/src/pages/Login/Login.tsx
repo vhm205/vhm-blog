@@ -1,5 +1,6 @@
 import React from 'react';
 import cookie from 'react-cookies';
+import Swal from 'sweetalert2';
 import {
 	Container,
 	Typography,
@@ -8,6 +9,7 @@ import {
 	CssBaseline,
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
+import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { TextBox, CheckBoxWithLabel } from '../../components/CustomField';
 import * as loginSchema from '../../validations/auth/login';
@@ -21,6 +23,16 @@ const initValues: LoginField = {
 
 const Login: React.FC = () => {
 	const classes = useStyles();
+	const history = useHistory();
+
+	const user = window.localStorage.getItem('user');
+	if (user) {
+		const { email, password, remember } = JSON.parse(user);
+		initValues.email = email;
+		initValues.password = password;
+		initValues.remember = remember;
+	}
+
 	return (
 		<Container className={classes.root} maxWidth="xs">
 			<CssBaseline />
@@ -29,15 +41,32 @@ const Login: React.FC = () => {
 				validationSchema={loginSchema.default}
 				onSubmit={async (values, { setSubmitting, resetForm, setErrors }) => {
 					try {
-						const user = new UserAPI();
-						const result: responseLogin = await user.login({
-							email: values.email,
-							password: values.password,
+						const { email, password, remember } = values;
+						const result: responseLogin = await UserAPI.login({
+							email,
+							password,
 						});
 						cookie.save('token', result.token, {});
 						cookie.save('refreshToken', result.refreshToken, {});
-						console.log('This is the result: ', result);
+
+						if (remember) {
+							window.localStorage.setItem('user', JSON.stringify(values));
+						} else {
+							window.localStorage.removeItem('user');
+						}
 						resetForm();
+
+						Swal.fire({
+							position: 'center',
+							icon: 'success',
+							title: result.message,
+							backdrop: 'rgba(85,85,85, .4)',
+							allowOutsideClick: false,
+							showConfirmButton: false,
+							timer: 2000,
+						}).then(() => {
+							history.push('/profile');
+						});
 					} catch (error) {
 						setErrors(error.response.data);
 					} finally {
@@ -45,12 +74,16 @@ const Login: React.FC = () => {
 					}
 				}}
 			>
-				{({ values, errors, isSubmitting, handleSubmit }) => (
+				{({ errors, isSubmitting, handleSubmit }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5">Sign In</Typography>
 						<TextBox name="email" placeholder="Email" />
 						<TextBox type="password" name="password" placeholder="Password" />
-						<CheckBoxWithLabel name="remember" label="Remember me" />
+						<CheckBoxWithLabel
+							type="checkbox"
+							name="remember"
+							label="Remember me"
+						/>
 						<Button
 							type="submit"
 							disabled={isSubmitting}
@@ -62,8 +95,6 @@ const Login: React.FC = () => {
 							Sign In
 						</Button>
 						{errors.message && <Alert severity="error">{errors.message}</Alert>}
-						<pre>{JSON.stringify(values, null, 2)}</pre>
-						<pre>{JSON.stringify(errors, null, 2)}</pre>
 					</Form>
 				)}
 			</Formik>
