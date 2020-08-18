@@ -45,7 +45,7 @@ UserSchema.methods = {
 		return token;
 	},
 	generateToken(data) {
-		return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '5m' });
+		return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '3m' });
 	},
 };
 
@@ -61,6 +61,12 @@ UserSchema.statics = {
 	},
 	checkTokenExists(token) {
 		return this.findOne({ 'tokens.token': token }, { 'local.password': 0 });
+	},
+	removeAllToken(id, email) {
+		return this.updateOne(
+			{ _id: id, 'local.email': email },
+			{ $set: { tokens: [] } }
+		);
 	},
 };
 

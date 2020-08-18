@@ -1,4 +1,5 @@
 import React from 'react';
+import cookie from 'react-cookies';
 import {
 	AppBar,
 	Toolbar,
@@ -6,14 +7,35 @@ import {
 	Button,
 	IconButton,
 	makeStyles,
+	Menu,
+	MenuItem,
+	Fab,
 } from '@material-ui/core';
-import { Menu as MenuIcon } from '@material-ui/icons';
-import { NavLink } from 'react-router-dom';
+import { Menu as MenuIcon, AccountCircle } from '@material-ui/icons';
+import { NavLink, withRouter, RouteComponentProps } from 'react-router-dom';
+import { isAuthenticated } from '../utils';
+import UserAPI from '../services/userService';
 
-interface NavBarProps {}
-
-const NavBar: React.FC<NavBarProps> = () => {
+const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useStyles();
+	const [anchorEl, setAnchorEl] = React.useState(null);
+
+	const handleMenu = (e: any) => {
+		setAnchorEl(e.currentTarget);
+	};
+	const handleClose = () => setAnchorEl(null);
+
+	const handleLogout = () => {
+		if (isAuthenticated) {
+			UserAPI.logout(cookie.load('refreshToken')).then(() => {
+				cookie.remove('token');
+				cookie.remove('refreshToken');
+				history.push('/login');
+				window.location.reload();
+			});
+		}
+		setAnchorEl(null);
+	};
 
 	return (
 		<div className={classes.root}>
@@ -30,24 +52,52 @@ const NavBar: React.FC<NavBarProps> = () => {
 					<Typography variant="h6" className={classes.title}>
 						VHM Blog
 					</Typography>
-					<Button
-						className={classes.btnActive}
-						color="primary"
-						variant="contained"
-						component={NavLink}
-						to="/login"
-					>
-						Login
-					</Button>
-					<Button
-						className={classes.btnActive}
-						color="primary"
-						variant="contained"
-						component={NavLink}
-						to="/register"
-					>
-						Register
-					</Button>
+					{!isAuthenticated ? (
+						<>
+							<Button
+								className={classes.btnActive}
+								color="primary"
+								variant="contained"
+								component={NavLink}
+								to="/login"
+							>
+								Login
+							</Button>
+							<Button
+								className={classes.btnActive}
+								color="primary"
+								variant="contained"
+								component={NavLink}
+								to="/register"
+							>
+								Register
+							</Button>
+						</>
+					) : (
+						<>
+							<Fab variant="extended" color="primary" onClick={handleMenu}>
+								<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
+								VHM
+							</Fab>
+							<Menu
+								anchorEl={anchorEl}
+								anchorOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								keepMounted
+								transformOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								open={!!anchorEl}
+								onClose={handleClose}
+							>
+								<MenuItem>Profile</MenuItem>
+								<MenuItem onClick={handleLogout}>Log out</MenuItem>
+							</Menu>
+						</>
+					)}
 				</Toolbar>
 			</AppBar>
 		</div>
@@ -71,4 +121,4 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default NavBar;
+export default withRouter(NavBar);

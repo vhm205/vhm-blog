@@ -4,6 +4,7 @@ type responseLogin = AxiosResponse & {
 	message: string;
 };
 type responseRegister = AxiosResponse & { message: string };
+type responseUser = AxiosResponse & User;
 
 interface LoginField {
 	email: string;
@@ -18,4 +19,14 @@ interface RegisterField {
 	password: string;
 	repass: string;
 	message?: string;
+}
+
+interface User {
+	id: string;
+	username: string;
+	email: string;
+	gender: string;
+	phone: string;
+	avatar: string;
+	role: string;
 }

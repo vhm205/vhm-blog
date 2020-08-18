@@ -1,5 +1,6 @@
 const UserModel = require('../models/User');
 const bcrypt = require('bcrypt');
+const { checkRefreshToken } = require('../utils');
 
 const registerPost = async (req, res) => {
 	try {
@@ -42,10 +43,8 @@ const loginPost = async (req, res) => {
 
 const getRefreshToken = async (req, res) => {
 	try {
-		let token = req.header('authorization') || req.query.access_token;
-		token.startsWith('Bearer ') && (token = token.split(' ')[1]);
-
-		const user = await UserModel.checkTokenExists(token);
+		const token = req.header('authorization') || req.query.access_token;
+		const user = await checkRefreshToken(token);
 		if (!user)
 			return res.status(400).json({ message: 'Refresh token is not exists' });
 
@@ -56,9 +55,23 @@ const getRefreshToken = async (req, res) => {
 	}
 };
 
+const logOut = async (req, res) => {
+	try {
+		const token = req.header('authorization') || req.query.access_token;
+		const user = await checkRefreshToken(token);
+		if (!user) return res.status(400).json({ message: "Token doesn't exist" });
+
+		await UserModel.removeAllToken(user._id, user.local.email);
+		return res.sendStatus(204);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const getProfile = async (req, res) => {
 	try {
-		console.log(req.user);
+		if (!req.user) return res.status(400).json({ message: 'Token is Expired' });
+		return res.status(200).json(req.user);
 	} catch (error) {
 		return res.status(400).json(error);
 	}
@@ -69,4 +82,5 @@ module.exports = {
 	loginPost,
 	getProfile,
 	getRefreshToken,
+	logOut,
 };
