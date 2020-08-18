@@ -66,6 +66,7 @@ const Login: React.FC = () => {
 							timer: 2000,
 						}).then(() => {
 							history.push('/profile');
+							window.location.reload();
 						});
 					} catch (error) {
 						setErrors(error.response.data);

@@ -11,10 +11,10 @@ const PublicRoute: React.FC<RouteProps & { component: any }> = ({
 			{...rest}
 			render={(props) => {
 				if (isAuthenticated) {
-					return <Component {...props} />;
+					return <Redirect to="/profile" />;
 				}
 
-				return <Redirect to="/login" />;
+				return <Component {...props} />;
 			}}
 		/>
 	);

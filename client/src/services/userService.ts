@@ -3,9 +3,6 @@ import api from './api';
 export default class UserAPI {
 	path: string = '/users';
 
-	constructor(token: string) {
-		api.defaults.headers.common['authorization'] = `Bearer ${token}`;
-	}
 	profile() {
 		return api.get(`${this.path}/profile`);
 	}
@@ -14,5 +11,12 @@ export default class UserAPI {
 	}
 	static register(data: Omit<RegisterField, 'remember' | 'message'>) {
 		return api.post('/users/register', data);
+	}
+	static logout(refreshToken: string) {
+		return api.get('/users/logout', {
+			headers: {
+				authorization: `Bearer ${refreshToken}`,
+			},
+		});
 	}
 }

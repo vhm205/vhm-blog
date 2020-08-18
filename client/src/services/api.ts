@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse, AxiosRequestConfig } from 'axios';
 import queryString from 'query-string';
+import cookie from 'react-cookies';
 import { config } from '../config/app';
 
 const api: AxiosInstance = axios.create({
@@ -10,6 +11,10 @@ const api: AxiosInstance = axios.create({
 });
 
 api.interceptors.request.use((config: AxiosRequestConfig) => {
+	const token = cookie.load('token');
+	if (token) {
+		config.headers['authorization'] = `Bearer ${token}`;
+	}
 	return config;
 });
 
