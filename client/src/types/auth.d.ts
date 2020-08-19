@@ -1,9 +1,11 @@
+type Gender = 'Male' | 'Female';
 type responseLogin = AxiosResponse & {
 	token: string;
 	refreshToken: string;
 	message: string;
 };
 type responseRegister = AxiosResponse & { message: string };
+type responseToken = AxiosResponse & { token: string };
 type responseUser = AxiosResponse & User;
 
 interface LoginField {
@@ -24,9 +26,11 @@ interface RegisterField {
 interface User {
 	id: string;
 	username: string;
-	email: string;
-	gender: string;
+	gender: Gender;
 	phone: string;
 	avatar: string;
 	role: string;
+	local: {
+		email: string;
+	};
 }

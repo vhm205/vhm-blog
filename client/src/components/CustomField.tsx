@@ -1,6 +1,13 @@
 import React, { ClassAttributes } from 'react';
 import { useField, FieldAttributes } from 'formik';
-import { TextField, Checkbox, FormControlLabel } from '@material-ui/core';
+import {
+	TextField,
+	Checkbox,
+	RadioGroup,
+	FormControlLabel,
+	FormControl,
+	FormLabel,
+} from '@material-ui/core';
 
 type TextBoxProps = FieldAttributes<{}> &
 	ClassAttributes<HTMLInputElement> & { placeholder: string; type?: string };
@@ -35,5 +42,17 @@ export const CheckBoxWithLabel: React.FC<
 			control={<Checkbox {...field} color="primary" />}
 			label={label}
 		/>
+	);
+};
+
+export const RadioGroupWithLabel: React.FC<
+	FieldAttributes<{}> & { label: string }
+> = ({ label, children, ...props }) => {
+	const [field] = useField<{}>(props);
+	return (
+		<FormControl component="fieldset" style={{ marginTop: 10 }}>
+			<FormLabel component="legend">{label}</FormLabel>
+			<RadioGroup {...field}>{children}</RadioGroup>
+		</FormControl>
 	);
 };

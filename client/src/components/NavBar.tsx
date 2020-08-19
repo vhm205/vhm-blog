@@ -3,6 +3,7 @@ import cookie from 'react-cookies';
 import {
 	AppBar,
 	Toolbar,
+	Avatar,
 	Typography,
 	Button,
 	IconButton,
@@ -14,10 +15,13 @@ import {
 import { Menu as MenuIcon, AccountCircle } from '@material-ui/icons';
 import { NavLink, withRouter, RouteComponentProps } from 'react-router-dom';
 import { isAuthenticated } from '../utils';
+import { useUser } from '../context/UserContext';
+import { config } from '../config/app';
 import UserAPI from '../services/userService';
 
 const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useStyles();
+	const profile = useUser();
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
 	const handleMenu = (e: any) => {
@@ -76,7 +80,15 @@ const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 					) : (
 						<>
 							<Fab variant="extended" color="primary" onClick={handleMenu}>
-								<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
+								{profile.user?.avatar ? (
+									<Avatar
+										alt="Avatar NavBar"
+										src={`${config.API_URL}/images/${profile.user.avatar}`}
+										style={{ marginRight: 10 }}
+									/>
+								) : (
+									<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
+								)}
 								VHM
 							</Fab>
 							<Menu

@@ -10,7 +10,6 @@ module.exports.authLocal = (req, res, next) => {
 
 module.exports.authToken = (req, res, next) => {
 	passport.authenticate('jwt', { session: false }, (err, user) => {
-		// console.log(err, user);
 		if (err) return res.status(400).json(err);
 		req.user = user;
 		next();

@@ -25,13 +25,14 @@ const corsOptions = {
 
 app.use(helmet());
 app.use(morgan('dev'));
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
 app.use('/users', userRoute);
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
 	res.send('Hello World');
 });
 
