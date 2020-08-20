@@ -1,19 +1,22 @@
 import React, { ClassAttributes } from 'react';
 import { useField, FieldAttributes } from 'formik';
-import {
-	TextField,
-	Checkbox,
-	RadioGroup,
-	FormControlLabel,
-	FormControl,
-	FormLabel,
-} from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import Checkbox from '@material-ui/core/Checkbox';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormControl from '@material-ui/core/FormControl';
+import FormLabel from '@material-ui/core/FormLabel';
 
 type TextBoxProps = FieldAttributes<{}> &
-	ClassAttributes<HTMLInputElement> & { placeholder: string; type?: string };
+	ClassAttributes<HTMLInputElement> & {
+		placeholder: string;
+		type?: string;
+		disabled?: boolean;
+		pattern?: RegExp | string;
+	};
 
 export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
-	({ placeholder, type, ...props }, ref) => {
+	({ placeholder, type, disabled, pattern, ...props }, ref) => {
 		const [field, meta] = useField<{}>(props);
 		const errStr = meta.touched && meta.error;
 		return (
@@ -24,8 +27,10 @@ export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 				autoComplete="off"
 				type={type ? type : 'text'}
 				style={{ marginTop: 10 }}
+				disabled={disabled ? disabled : false}
 				placeholder={placeholder}
 				helperText={errStr}
+				inputProps={pattern ? { pattern } : {}}
 				error={!!errStr}
 				fullWidth
 			/>
