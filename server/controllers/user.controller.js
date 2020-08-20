@@ -77,10 +77,21 @@ const getProfile = async (req, res) => {
 	}
 };
 
+const updateProfile = async (req, res) => {
+	try {
+		console.log(req.body);
+
+		return res.status(200).json({ message: 'Ey yoooo!! What is up' });
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports = {
 	registerPost,
 	loginPost,
-	getProfile,
 	getRefreshToken,
+	getProfile,
+	updateProfile,
 	logOut,
 };

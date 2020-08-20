@@ -10,7 +10,6 @@ export const GlobalStyle = createGlobalStyle`
 			format('truetype');
 	}
 	* {
-		overflow: hidden;
 		padding: 0;
 		margin: 0;		
 	}
@@ -19,7 +18,7 @@ export const GlobalStyle = createGlobalStyle`
 		min-height: 100%;
 	}
 
-	a{
+	a {
 		text-decoration: none !important;
 	}
 `;

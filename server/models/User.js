@@ -45,7 +45,7 @@ UserSchema.methods = {
 		return token;
 	},
 	generateToken(data) {
-		return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '3m' });
+		return jwt.sign(data, process.env.JWT_SECRET, { expiresIn: '10m' });
 	},
 };
 

@@ -1,6 +1,10 @@
 import api from './api';
 import cookie from 'react-cookies';
 
+type DataProfile = Omit<User, 'id' | 'role' | 'local'>;
+type DataLogin = Omit<LoginField, 'remember' | 'message'>;
+type DataRegister = Omit<RegisterField, 'remember' | 'message'>;
+
 export default class UserAPI {
 	path: string = '/users';
 
@@ -13,10 +17,13 @@ export default class UserAPI {
 	profile() {
 		return api.get(`${this.path}/profile`);
 	}
-	static login(data: Omit<LoginField, 'remember' | 'message'>) {
+	updateProfile(data: DataProfile) {
+		return api.patch(`${this.path}/update-profile`, data);
+	}
+	static login(data: DataLogin) {
 		return api.post('/users/login', data);
 	}
-	static register(data: Omit<RegisterField, 'remember' | 'message'>) {
+	static register(data: DataRegister) {
 		return api.post('/users/register', data);
 	}
 	static logout(refreshToken: string) {

@@ -1,22 +1,20 @@
 import React from 'react';
-import cookie from 'react-cookies';
-import {
-	AppBar,
-	Toolbar,
-	Avatar,
-	Typography,
-	Button,
-	IconButton,
-	makeStyles,
-	Menu,
-	MenuItem,
-	Fab,
-} from '@material-ui/core';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Avatar from '@material-ui/core/Avatar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Fab from '@material-ui/core/Fab';
+import { makeStyles } from '@material-ui/core/styles';
 import { Menu as MenuIcon, AccountCircle } from '@material-ui/icons';
 import { NavLink, withRouter, RouteComponentProps } from 'react-router-dom';
 import { isAuthenticated } from '../utils';
 import { useUser } from '../context/UserContext';
 import { config } from '../config/app';
+import cookie from 'react-cookies';
 import UserAPI from '../services/userService';
 
 const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
@@ -79,7 +77,7 @@ const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 						</>
 					) : (
 						<>
-							<Fab variant="extended" color="primary" onClick={handleMenu}>
+							<Fab variant="extended" color="default" onClick={handleMenu}>
 								{profile.user?.avatar ? (
 									<Avatar
 										alt="Avatar NavBar"
@@ -89,7 +87,7 @@ const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 								) : (
 									<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
 								)}
-								VHM
+								{profile.user?.username}
 							</Fab>
 							<Menu
 								anchorEl={anchorEl}
