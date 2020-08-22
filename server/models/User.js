@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
 	username: { type: String, maxlength: 30, trim: true, required: true },
-	phone: { type: String, minlength: 10, maxlength: 11, default: null },
+	phone: { type: String, minlength: 10, maxlength: 11, default: '' },
 	gender: { type: String, default: 'Male' },
 	avatar: { type: String, default: 'default-avatar.png' },
 	role: { type: String, default: 'user' },
@@ -66,6 +66,13 @@ UserSchema.statics = {
 		return this.updateOne(
 			{ _id: id, 'local.email': email },
 			{ $set: { tokens: [] } }
+		);
+	},
+	updateProfile(id, data) {
+		return this.findByIdAndUpdate(
+			{ _id: id },
+			{ $set: data },
+			{ 'local.password': 0, tokens: 0 }
 		);
 	},
 };

@@ -18,6 +18,35 @@ export const showPreviewAvatar = (
 	reader.readAsDataURL(file);
 };
 
+export const validImage = (file: File): { status: string; message: string } => {
+	const typeValid = [
+		'image/png',
+		'image/jpg',
+		'image/jpeg',
+		'image/bmp',
+		'image/gif',
+	];
+
+	if (!typeValid.includes(file.type)) {
+		return {
+			status: 'error',
+			message: 'The file is not in the correct format',
+		};
+	}
+
+	if (file.size > 1048576) {
+		return {
+			status: 'error',
+			message: 'File not larger than 1 MB',
+		};
+	}
+
+	return {
+		status: 'success',
+		message: 'ok',
+	};
+};
+
 export const setInputFilter = (
 	textBox: Element,
 	inputFilter: (value: string) => boolean

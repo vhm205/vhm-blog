@@ -1,6 +1,9 @@
-const UserModel = require('../models/User');
+const fs = require('fs');
 const bcrypt = require('bcrypt');
+const multiparty = require('multiparty');
+const UserModel = require('../models/User');
 const { checkRefreshToken } = require('../utils');
+const { avatar_directory } = require('../config/app');
 
 const registerPost = async (req, res) => {
 	try {
@@ -55,19 +58,6 @@ const getRefreshToken = async (req, res) => {
 	}
 };
 
-const logOut = async (req, res) => {
-	try {
-		const token = req.header('authorization') || req.query.access_token;
-		const user = await checkRefreshToken(token);
-		if (!user) return res.status(400).json({ message: "Token doesn't exist" });
-
-		await UserModel.removeAllToken(user._id, user.local.email);
-		return res.sendStatus(204);
-	} catch (error) {
-		return res.status(400).json(error);
-	}
-};
-
 const getProfile = async (req, res) => {
 	try {
 		if (!req.user) return res.status(401).json({ message: 'Token is Expired' });
@@ -77,11 +67,60 @@ const getProfile = async (req, res) => {
 	}
 };
 
-const updateProfile = async (req, res) => {
-	try {
-		console.log(req.body);
+const updateProfile = (schema) => {
+	return (req, res) => {
+		const form = new multiparty.Form();
+		form.parse(req, async (err, fields, _) => {
+			if (err) return res.status(400).json(err);
 
-		return res.status(200).json({ message: 'Ey yoooo!! What is up' });
+			// console.log('\nUser Field: ', fields);
+			// console.log('\nUser File: ', _);
+			// console.log('\nUser Avatar: ', req.avatar);
+			try {
+				const { username, gender, phone } = fields;
+				const items = await schema.validateAsync({
+					username: username[0],
+					gender: gender[0],
+					phone: phone[0],
+				});
+
+				if (req.avatar) {
+					items.avatar = req.avatar.filename;
+				}
+
+				const user = await UserModel.updateProfile(req.user._id, items);
+				const pathOldAvatar = `${avatar_directory}/${user.avatar}`;
+				if (
+					items.avatar &&
+					user.avatar !== 'default-avatar.png' &&
+					fs.existsSync(pathOldAvatar)
+				) {
+					fs.unlinkSync(pathOldAvatar);
+				}
+
+				return res
+					.status(200)
+					.json({ message: 'Update Profile Successfully!!' });
+			} catch (error) {
+				let errorsDetail = error;
+				if (details in error) {
+					errorsDetail = error.details.map((err) => err.message);
+				}
+
+				return res.status(422).json({ errors: errorsDetail });
+			}
+		});
+	};
+};
+
+const logOut = async (req, res) => {
+	try {
+		const token = req.header('authorization') || req.query.access_token;
+		const user = await checkRefreshToken(token);
+		if (!user) return res.status(400).json({ message: "Token doesn't exist" });
+
+		await UserModel.removeAllToken(user._id, user.local.email);
+		return res.sendStatus(204);
 	} catch (error) {
 		return res.status(400).json(error);
 	}

@@ -1,10 +1,10 @@
 type Gender = 'Male' | 'Female';
+type responseWithMessage = AxiosResponse & { message: string };
 type responseLogin = AxiosResponse & {
 	token: string;
 	refreshToken: string;
 	message: string;
 };
-type responseRegister = AxiosResponse & { message: string };
 type responseToken = AxiosResponse & { token: string };
 type responseUser = AxiosResponse & User;
 
@@ -28,7 +28,7 @@ interface User {
 	username: string;
 	gender: Gender;
 	phone: string;
-	avatar: string;
+	avatar: string | File;
 	role: string;
 	local: {
 		email: string;
