@@ -21,7 +21,6 @@ const loginSchema = Joi.object({
 const profileSchema = Joi.object({
 	username: Joi.string().alphanum().min(3).max(30).required(),
 	gender: Joi.string().allow('Male', 'Female'),
-	avatar: Joi.string().optional(),
 	phone: Joi.string().min(10).max(11).optional(),
 });
 

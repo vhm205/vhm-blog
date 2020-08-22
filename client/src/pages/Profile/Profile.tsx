@@ -1,6 +1,7 @@
-import React, { useRef, ChangeEvent } from 'react';
+import React, { useRef, useState, ChangeEvent } from 'react';
 import { useUser } from '../../context/UserContext';
 import { makeStyles } from '@material-ui/core/styles';
+import Snackbar from '@material-ui/core/Snackbar';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -12,8 +13,12 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 
 import { Formik, Form } from 'formik';
-import { TextBox, RadioGroupWithLabel } from '../../components/CustomField';
-import { showPreviewAvatar } from '../../utils';
+import {
+	TextBox,
+	RadioGroupWithLabel,
+	Alert,
+} from '../../components/CustomField';
+import { showPreviewAvatar, validImage } from '../../utils';
 import { config } from '../../config/app';
 import * as profileSchema from '../../validations/profile';
 import UserAPI from '../../services/userService';
@@ -32,34 +37,65 @@ const Profile: React.FC = () => {
 	const classes = useStyles();
 	const profile = useUser();
 	const thumb = useRef<HTMLImageElement>(null);
+	const [notify, setNotify] = useState<NotificationType>({
+		type: '',
+		message: '',
+		open: false,
+	});
 
 	if (!profile?.user) {
 		return <div>Loading...</div>;
 	}
-	initValues = { ...profile.user, phone: '' };
+	initValues = { ...profile.user };
+
+	const handleClose = (): void =>
+		setNotify((prevValue: NotificationType) => ({ ...prevValue, open: false }));
 
 	return (
 		<Paper elevation={3} className={classes.paper}>
 			<Formik
 				initialValues={initValues}
 				validationSchema={profileSchema.default}
-				onSubmit={async (values, { setSubmitting, setErrors }) => {
+				onSubmit={async (values, { setErrors }) => {
 					try {
-						// const user = new UserAPI();
-						// const { username, phone, gender, avatar } = values;
-						// const result = await user.updateProfile({
-						// 	username, phone, gender, avatar
-						// })
-						console.log(values);
+						const user = new UserAPI();
+						const frmData = new FormData();
+						const { username, phone, gender, avatar } = values;
+
+						if (typeof avatar !== 'string') {
+							const { status, message } = validImage(avatar);
+							if (status === 'error') {
+								setNotify({
+									open: true,
+									type: status,
+									message: message,
+								});
+								return;
+							}
+
+							frmData.append('avatar', avatar);
+						}
+
+						frmData.append('username', username);
+						frmData.append('phone', phone);
+						frmData.append('gender', gender);
+
+						const result: responseWithMessage = await user.updateProfile(
+							frmData
+						);
+
+						setNotify({
+							open: true,
+							type: 'success',
+							message: result.message,
+						});
 					} catch (error) {
-						console.error(error, error.response);
+						console.error(error, error.response, error.message);
 						setErrors(error.response.data);
-					} finally {
-						setSubmitting(false);
 					}
 				}}
 			>
-				{({ values, errors, handleSubmit, isSubmitting, setFieldValue }) => (
+				{({ handleSubmit, isSubmitting, setFieldValue }) => (
 					<Grid container justify="center">
 						<Grid item xs={12} sm={4} container alignItems="flex-start">
 							<Card className={classes.card}>
@@ -82,8 +118,10 @@ const Profile: React.FC = () => {
 											onChange={(e: ChangeEvent<HTMLInputElement>) => {
 												if (e.currentTarget.files) {
 													const file = e.currentTarget.files[0];
-													setFieldValue('avatar', file);
-													showPreviewAvatar(file, thumb);
+													if (file !== undefined) {
+														setFieldValue('avatar', file);
+														showPreviewAvatar(file, thumb);
+													}
 												}
 											}}
 										/>
@@ -121,8 +159,16 @@ const Profile: React.FC = () => {
 								>
 									Update Profile
 								</Button>
-								<pre>{JSON.stringify(values, null, 2)}</pre>
-								<pre>{JSON.stringify(errors, null, 2)}</pre>
+								<Snackbar
+									open={notify.open}
+									autoHideDuration={5000}
+									onClose={handleClose}
+									anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+								>
+									<Alert onClose={handleClose} severity={notify.type}>
+										{notify.message}
+									</Alert>
+								</Snackbar>
 							</Form>
 						</Grid>
 					</Grid>

@@ -1,7 +1,7 @@
 import api from './api';
 import cookie from 'react-cookies';
 
-type DataProfile = Omit<User, 'id' | 'role' | 'local'>;
+type DataProfile = Omit<User, 'id' | 'role' | 'local' | 'avatar'>;
 type DataLogin = Omit<LoginField, 'remember' | 'message'>;
 type DataRegister = Omit<RegisterField, 'remember' | 'message'>;
 
@@ -17,7 +17,7 @@ export default class UserAPI {
 	profile() {
 		return api.get(`${this.path}/profile`);
 	}
-	updateProfile(data: DataProfile) {
+	updateProfile(data: FormData) {
 		return api.patch(`${this.path}/update-profile`, data);
 	}
 	static login(data: DataLogin) {

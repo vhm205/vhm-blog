@@ -1,5 +1,6 @@
 import React, { ClassAttributes } from 'react';
 import { useField, FieldAttributes } from 'formik';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import RadioGroup from '@material-ui/core/RadioGroup';
@@ -60,4 +61,8 @@ export const RadioGroupWithLabel: React.FC<
 			<RadioGroup {...field}>{children}</RadioGroup>
 		</FormControl>
 	);
+};
+
+export const Alert = (props: AlertProps) => {
+	return <MuiAlert elevation={6} variant="filled" {...props} />;
 };

@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { validate, authLocal, authToken } = require('../middleware');
+const { validate, authLocal, authToken, upload } = require('../middleware');
 const {
 	registerSchema,
 	loginSchema,
@@ -22,8 +22,8 @@ router.post('/login', validate(loginSchema), authLocal, loginPost);
 router.patch(
 	'/update-profile',
 	authToken,
-	validate(profileSchema),
-	updateProfile
+	upload.uploadAvatar,
+	updateProfile(profileSchema)
 );
 router.get('/profile', authToken, getProfile);
 router.get('/refresh-token', authToken, getRefreshToken);

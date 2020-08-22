@@ -34,7 +34,7 @@ const Register: React.FC = () => {
 				onSubmit={async (values, { setSubmitting, setErrors, resetForm }) => {
 					try {
 						const { username, email, password, repass } = values;
-						const result: responseRegister = await UserAPI.register({
+						const result: responseWithMessage = await UserAPI.register({
 							username,
 							email,
 							password,
