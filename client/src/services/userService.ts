@@ -1,7 +1,6 @@
 import api from './api';
 import cookie from 'react-cookies';
 
-type DataProfile = Omit<User, 'id' | 'role' | 'local' | 'avatar'>;
 type DataLogin = Omit<LoginField, 'remember' | 'message'>;
 type DataRegister = Omit<RegisterField, 'remember' | 'message'>;
 

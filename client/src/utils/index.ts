@@ -5,6 +5,10 @@ export const isAuthenticated = !!(
 	cookie.load('token') && cookie.load('refreshToken')
 );
 
+export const checkSocialAccount = (user: User) => {
+	return !!user.google || !!user.facebook;
+};
+
 export const showPreviewAvatar = (
 	file: File,
 	thumb: RefObject<HTMLImageElement>

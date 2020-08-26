@@ -18,8 +18,10 @@ import {
 	RadioGroupWithLabel,
 	Alert,
 } from '../../components/CustomField';
-import { showPreviewAvatar, validImage } from '../../utils';
+import { showPreviewAvatar, validImage, checkSocialAccount } from '../../utils';
 import { config } from '../../config/app';
+import { useParams } from 'react-router-dom';
+import cookie from 'react-cookies';
 import * as profileSchema from '../../validations/profile';
 import UserAPI from '../../services/userService';
 
@@ -36,6 +38,7 @@ let initValues: Omit<User, 'id' | 'role'> = {
 const Profile: React.FC = () => {
 	const classes = useStyles();
 	const profile = useUser();
+	const { token, refreshToken } = useParams();
 	const thumb = useRef<HTMLImageElement>(null);
 	const [notify, setNotify] = useState<NotificationType>({
 		type: '',
@@ -43,10 +46,28 @@ const Profile: React.FC = () => {
 		open: false,
 	});
 
+	// Handle when login with social account
+	if (token && refreshToken && !profile.user) {
+		cookie.save('token', token, { path: '/' });
+		cookie.save('refreshToken', refreshToken, { path: '/' });
+
+		(async () => {
+			const user = new UserAPI();
+			const result: responseUser = await user.profile();
+
+			if (profile.setUser) {
+				profile.setUser(result);
+			}
+		})();
+	}
+
 	if (!profile?.user) {
 		return <div>Loading...</div>;
 	}
 	initValues = { ...profile.user };
+	const { user } = profile;
+
+	const isSocialAccount = checkSocialAccount(user);
 
 	const handleClose = (): void =>
 		setNotify((prevValue: NotificationType) => ({ ...prevValue, open: false }));
@@ -55,10 +76,20 @@ const Profile: React.FC = () => {
 		<Paper elevation={3} className={classes.paper}>
 			<Formik
 				initialValues={initValues}
+				validateOnChange={false}
 				validationSchema={profileSchema.default}
 				onSubmit={async (values, { setErrors }) => {
+					if (isSocialAccount) {
+						setNotify({
+							open: true,
+							type: 'warning',
+							message: "You can't update profile with social account",
+						});
+						return;
+					}
+
 					try {
-						const user = new UserAPI();
+						const userApi = new UserAPI();
 						const frmData = new FormData();
 						const { username, phone, gender, avatar } = values;
 
@@ -80,7 +111,7 @@ const Profile: React.FC = () => {
 						frmData.append('phone', phone);
 						frmData.append('gender', gender);
 
-						const result: responseWithMessage = await user.updateProfile(
+						const result: responseWithMessage = await userApi.updateProfile(
 							frmData
 						);
 
@@ -101,20 +132,30 @@ const Profile: React.FC = () => {
 							<Card className={classes.card}>
 								<CardActionArea>
 									<img
-										src={`${config.API_URL}/images/${initValues.avatar}`}
+										src={
+											isSocialAccount
+												? (initValues.avatar as string)
+												: `${config.API_URL}/images/${initValues.avatar}`
+										}
 										className={classes.avatar}
 										alt="Avatar Profile"
 										ref={thumb}
 									/>
 								</CardActionArea>
 								<CardActions>
-									<Button variant="outlined" component="label" fullWidth>
+									<Button
+										variant="outlined"
+										component="label"
+										disabled={isSocialAccount}
+										fullWidth
+									>
 										Upload File
 										<input
 											type="file"
 											name="avatar"
 											accept="image/*"
 											style={{ display: 'none' }}
+											disabled={isSocialAccount}
 											onChange={(e: ChangeEvent<HTMLInputElement>) => {
 												if (e.currentTarget.files) {
 													const file = e.currentTarget.files[0];
@@ -134,7 +175,17 @@ const Profile: React.FC = () => {
 								<Typography variant="h5" style={{ marginTop: 30 }}>
 									Your Profile
 								</Typography>
-								<TextBox name="local.email" placeholder="Email..." disabled />
+								<TextBox
+									name={
+										user?.google
+											? 'google.email'
+											: user?.facebook
+											? 'facebook.email'
+											: 'local.email'
+									}
+									placeholder="Email..."
+									disabled
+								/>
 								<TextBox name="username" placeholder="Username..." />
 								<TextBox name="phone" placeholder="Phone..." pattern="[0-9]*" />
 								<RadioGroupWithLabel name="gender" label="Gender">
@@ -151,7 +202,7 @@ const Profile: React.FC = () => {
 								</RadioGroupWithLabel>
 								<Button
 									type="submit"
-									disabled={isSubmitting}
+									disabled={isSubmitting || isSocialAccount}
 									className={classes.btnSubmit}
 									color="primary"
 									variant="contained"

@@ -81,7 +81,11 @@ const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 								{profile.user?.avatar ? (
 									<Avatar
 										alt="Avatar NavBar"
-										src={`${config.API_URL}/images/${profile.user.avatar}`}
+										src={
+											!!profile?.user?.google || !!profile?.user?.facebook
+												? (profile.user.avatar as string)
+												: `${config.API_URL}/images/${profile.user.avatar}`
+										}
 										style={{ marginRight: 10 }}
 									/>
 								) : (

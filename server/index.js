@@ -23,8 +23,11 @@ const corsOptions = {
 	},
 };
 
+if (process.env.NODE_ENV === 'development') {
+	app.use(morgan('dev'));
+}
+
 app.use(helmet());
-app.use(morgan('dev'));
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
