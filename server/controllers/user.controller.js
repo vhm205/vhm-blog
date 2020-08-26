@@ -60,6 +60,7 @@ const getRefreshToken = async (req, res) => {
 
 const getProfile = async (req, res) => {
 	try {
+		console.log(req.isAuthenticated());
 		if (!req.user) return res.status(401).json({ message: 'Token is Expired' });
 		return res.status(200).json(req.user);
 	} catch (error) {
@@ -73,9 +74,6 @@ const updateProfile = (schema) => {
 		form.parse(req, async (err, fields, _) => {
 			if (err) return res.status(400).json(err);
 
-			// console.log('\nUser Field: ', fields);
-			// console.log('\nUser File: ', _);
-			// console.log('\nUser Avatar: ', req.avatar);
 			try {
 				const { username, gender, phone } = fields;
 				const items = await schema.validateAsync({

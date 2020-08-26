@@ -30,7 +30,13 @@ interface User {
 	phone: string;
 	avatar: string | File;
 	role: string;
-	local: {
+	local?: {
+		email: string;
+	};
+	google?: {
+		email: string;
+	};
+	facebook?: {
 		email: string;
 	};
 }

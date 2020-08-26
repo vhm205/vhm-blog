@@ -1,17 +1,16 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import Swal from 'sweetalert2';
-import {
-	Container,
-	Typography,
-	Button,
-	makeStyles,
-	CssBaseline,
-} from '@material-ui/core';
+import Container from '@material-ui/core/Container';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import { Alert } from '@material-ui/lab';
+import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { Formik, Form } from 'formik';
 import { TextBox, CheckBoxWithLabel } from '../../components/CustomField';
+import { config } from '../../config/app';
 import * as loginSchema from '../../validations/auth/login';
 import UserAPI from '../../services/userService';
 
@@ -94,6 +93,17 @@ const Login: React.FC = () => {
 							fullWidth
 						>
 							Sign In
+						</Button>
+						<hr />
+						<Button
+							className={classes.btnSubmit}
+							color="secondary"
+							variant="contained"
+							fullWidth
+							component="a"
+							href={`${config.API_URL}/users/auth/google`}
+						>
+							Login with Google
 						</Button>
 						{errors.message && <Alert severity="error">{errors.message}</Alert>}
 					</Form>

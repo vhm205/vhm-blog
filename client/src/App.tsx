@@ -17,18 +17,22 @@ import { GlobalStyle } from './styles/globalStyle';
 
 const App: React.FC = () => {
 	return (
-		<UserProvider>
-			<Router>
+		<Router>
+			<UserProvider>
 				<NavBar />
 				<Switch>
 					<PublicRoute path="/login" component={Login} />
 					<PublicRoute path="/register" component={Register} />
-					<PrivateRoute path="/profile" component={Profile} />
+					<PrivateRoute exact path="/profile" component={Profile} />
+					<PrivateRoute
+						path="/profile/:token/:refreshToken"
+						component={Profile}
+					/>
 					<PublicRoute component={NotFound} />
 				</Switch>
 				<GlobalStyle />
-			</Router>
-		</UserProvider>
+			</UserProvider>
+		</Router>
 	);
 };
 

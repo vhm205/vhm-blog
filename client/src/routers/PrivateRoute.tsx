@@ -10,7 +10,8 @@ const PrivateRoute: React.FC<RouteProps & { component: any }> = ({
 		<Route
 			{...rest}
 			render={(props) => {
-				if (!isAuthenticated) {
+				const { token, refreshToken } = props.match.params;
+				if (!isAuthenticated && !token && !refreshToken) {
 					return <Redirect to="/login" />;
 				}
 

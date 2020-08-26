@@ -4,7 +4,12 @@ const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
 	username: { type: String, maxlength: 30, trim: true, required: true },
-	phone: { type: String, minlength: 10, maxlength: 11, default: '' },
+	phone: {
+		type: String,
+		minlength: 10,
+		maxlength: 11,
+		required: false,
+	},
 	gender: { type: String, default: 'Male' },
 	avatar: { type: String, default: 'default-avatar.png' },
 	role: { type: String, default: 'user' },
@@ -22,7 +27,7 @@ const UserSchema = new mongoose.Schema({
 		uid: String,
 		email: { type: String, trim: true },
 	},
-	tokens: [{ _id: false, token: { type: String, required: true } }],
+	tokens: [{ _id: false, token: { type: String, required: false } }],
 	createdAt: { type: Number, default: Date.now },
 	updatedAt: { type: Number, default: null },
 });
@@ -58,6 +63,9 @@ UserSchema.statics = {
 	},
 	checkUserByEmail(email) {
 		return this.findOne({ 'local.email': email });
+	},
+	checkUserByGoogleEmail(email) {
+		return this.findOne({ 'google.email': email });
 	},
 	checkTokenExists(token) {
 		return this.findOne({ 'tokens.token': token }, { 'local.password': 0 });

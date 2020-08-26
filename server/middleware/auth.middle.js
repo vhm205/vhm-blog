@@ -15,3 +15,5 @@ module.exports.authToken = (req, res, next) => {
 		next();
 	})(req, res, next);
 };
+
+module.exports.authGoogle = (req, res, next) => {};
