@@ -231,7 +231,9 @@ const Profile: React.FC = () => {
 
 const useStyles = makeStyles((theme) => ({
 	paper: {
+		flexGrow: 1,
 		padding: theme.spacing(8),
+		paddingLeft: theme.spacing(10),
 	},
 	avatar: {
 		objectFit: 'cover',

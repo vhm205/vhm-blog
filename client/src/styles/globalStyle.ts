@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { makeStyles, Theme } from '@material-ui/core/styles';
 
 export const GlobalStyle = createGlobalStyle`
 	@font-face {
@@ -22,3 +23,14 @@ export const GlobalStyle = createGlobalStyle`
 		text-decoration: none !important;
 	}
 `;
+
+export const useCommonStyles = makeStyles((theme: Theme) => ({
+	toolbar: {
+		display: 'flex',
+		alignItems: 'center',
+		justifyContent: 'flex-end',
+		padding: theme.spacing(0, 1),
+		// necessary for content to be below app bar
+		...theme.mixins.toolbar,
+	},
+}));
