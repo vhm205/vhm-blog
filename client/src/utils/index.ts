@@ -1,4 +1,5 @@
 import { RefObject } from 'react';
+import UserAPI from '../services/userService';
 import cookie from 'react-cookies';
 
 export const isAuthenticated = !!(
@@ -7,6 +8,15 @@ export const isAuthenticated = !!(
 
 export const checkSocialAccount = (user: User) => {
 	return !!user.google || !!user.facebook;
+};
+
+export const logout = () => {
+	if (isAuthenticated) {
+		UserAPI.logout(cookie.load('refreshToken')).then(() => {
+			cookie.remove('token');
+			cookie.remove('refreshToken');
+		});
+	}
 };
 
 export const showPreviewAvatar = (
