@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
+import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form } from 'formik';
 import { TextBox, Alert } from '../../components/CustomField';
-import { Editor } from '@tinymce/tinymce-react';
+import { useCommonStyles } from '../../styles/commonStyle';
 import { config } from '../../config/app';
 
-const initValues = {
+const initValues: PostField = {
 	title: '',
 	content: '',
 	category: '',
@@ -29,7 +29,7 @@ const initEditor = {
 };
 
 const AddPost: React.FC = () => {
-	const classes = useStyles();
+	const classes = useCommonStyles();
 	const [content, setContent] = useState();
 	const [notify, setNotify] = useState<NotificationType>({
 		type: '',
@@ -47,10 +47,10 @@ const AddPost: React.FC = () => {
 			<Formik
 				initialValues={initValues}
 				onSubmit={(values) => {
-					console.log(values);
+					console.log(values, content);
 				}}
 			>
-				{({ handleSubmit, isSubmitting }) => (
+				{({ values, handleSubmit, isSubmitting }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5" style={{ marginTop: 30 }}>
 							Add Post
@@ -72,6 +72,7 @@ const AddPost: React.FC = () => {
 						>
 							Add New Post
 						</Button>
+						<pre>{JSON.stringify(values, null, 2)}</pre>
 						<Snackbar
 							open={notify.open}
 							autoHideDuration={5000}
@@ -88,19 +89,5 @@ const AddPost: React.FC = () => {
 		</Paper>
 	);
 };
-
-const useStyles = makeStyles((theme: Theme) =>
-	createStyles({
-		paper: {
-			flexGrow: 1,
-			padding: theme.spacing(8),
-			paddingTop: theme.spacing(1),
-			paddingLeft: theme.spacing(10),
-		},
-		btnSubmit: {
-			marginTop: 10,
-		},
-	})
-);
 
 export default AddPost;

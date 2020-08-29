@@ -8,4 +8,13 @@ const CategorySchema = new mongoose.Schema({
 	updatedAt: { type: Number, default: null },
 });
 
+CategorySchema.statics = {
+	createCategory(items) {
+		return this.create(items);
+	},
+	getCategoryByName(name) {
+		return this.findOne({ name });
+	},
+};
+
 module.exports = mongoose.model('Category', CategorySchema);

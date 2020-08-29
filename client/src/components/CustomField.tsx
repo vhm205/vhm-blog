@@ -1,5 +1,6 @@
 import React, { ClassAttributes } from 'react';
 import { useField, FieldAttributes } from 'formik';
+import { TextFieldProps } from '@material-ui/core/TextField';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -8,24 +9,27 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
+// type VariantTextFieldProps = 'filled' | 'standard' | 'outlined';
 type TextBoxProps = FieldAttributes<{}> &
-	ClassAttributes<HTMLInputElement> & {
-		placeholder: string;
+	ClassAttributes<HTMLInputElement> &
+	TextFieldProps & {
+		placeholder?: string;
 		type?: string;
 		disabled?: boolean;
 		pattern?: RegExp | string;
 	};
 
 export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
-	({ placeholder, type, disabled, pattern, ...props }, ref) => {
+	({ placeholder, type, variant, disabled, pattern, ...props }, ref) => {
 		const [field, meta] = useField<{}>(props);
 		const errStr = meta.touched && meta.error;
+
 		return (
 			<TextField
 				{...field}
 				ref={ref}
-				variant="outlined"
 				autoComplete="off"
+				variant="outlined"
 				type={type ? type : 'text'}
 				style={{ marginTop: 10 }}
 				disabled={disabled ? disabled : false}

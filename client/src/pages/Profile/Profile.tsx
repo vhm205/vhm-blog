@@ -122,7 +122,11 @@ const Profile: React.FC = () => {
 						});
 					} catch (error) {
 						console.error(error, error.response, error.message);
-						setErrors(error.response.data);
+						setNotify({
+							open: true,
+							type: 'error',
+							message: error.response.data[0],
+						});
 					}
 				}}
 			>
