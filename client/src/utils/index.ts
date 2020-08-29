@@ -11,6 +11,8 @@ export const checkSocialAccount = (user: User) => {
 };
 
 export const logout = () => {
+	console.log(isAuthenticated);
+
 	if (isAuthenticated) {
 		UserAPI.logout(cookie.load('refreshToken')).then(() => {
 			cookie.remove('token');
@@ -61,39 +63,23 @@ export const validImage = (file: File): { status: string; message: string } => {
 	};
 };
 
-export const setInputFilter = (
-	textBox: Element,
-	inputFilter: (value: string) => boolean
-) => {
-	[
-		'input',
-		'keydown',
-		'keyup',
-		'mousedown',
-		'mouseup',
-		'select',
-		'contextmenu',
-		'drop',
-	].forEach(function (event) {
-		textBox.addEventListener(event, function (
-			this: (HTMLInputElement | HTMLTextAreaElement) & {
-				oldValue: string;
-				oldSelectionStart: number | null;
-				oldSelectionEnd: number | null;
-			}
-		) {
-			if (inputFilter(this.value)) {
-				this.oldValue = this.value;
-				this.oldSelectionStart = this.selectionStart;
-				this.oldSelectionEnd = this.selectionEnd;
-			} else if (Object.prototype.hasOwnProperty.call(this, 'oldValue')) {
-				this.value = this.oldValue;
-				if (this.oldSelectionStart !== null && this.oldSelectionEnd !== null) {
-					this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-				}
-			} else {
-				this.value = '';
-			}
-		});
-	});
+export const handleErrors = (errors: ErrorType) => {
+	let message = '';
+	if ('message' in errors) {
+		message = errors.message;
+	} else {
+		message = errors.errors[0];
+	}
+
+	return message;
 };
+
+export const slugify = (text: string, separator: string = '-') =>
+	text
+		.toString()
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9 ]/g, '')
+		.replace(/\s+/g, separator);

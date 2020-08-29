@@ -1,3 +1,9 @@
+type ErrorType =
+	| {
+			message: string;
+	  }
+	| { errors: Array<string> };
+
 interface NotificationType {
 	type: string | AlertProps;
 	message: string;

@@ -10,6 +10,7 @@ const morgan = require('morgan');
 
 // Routes
 const userRoute = require('./routes/users');
+const cmsRoute = require('./routes/cms');
 
 // Setup Cors
 const whitelist = ['http://localhost', 'http://localhost:3000'];
@@ -34,6 +35,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/users', userRoute);
+app.use('/cms', cmsRoute);
 
 app.get('/', (_, res) => {
 	res.send('Hello World');
