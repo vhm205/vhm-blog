@@ -1,5 +1,5 @@
 import api from './api';
-import cookie from 'react-cookies';
+import { getToken } from '../utils';
 
 type DataLogin = Omit<LoginField, 'remember' | 'message'>;
 type DataRegister = Omit<RegisterField, 'remember' | 'message'>;
@@ -8,7 +8,7 @@ export default class UserAPI {
 	path: string = '/users';
 
 	constructor(token?: string) {
-		const tokenBearer = token ? token : cookie.load('token');
+		const tokenBearer = token ? token : getToken();
 		if (tokenBearer) {
 			api.defaults.headers.common['authorization'] = `Bearer ${tokenBearer}`;
 		}
@@ -25,10 +25,10 @@ export default class UserAPI {
 	static register(data: DataRegister) {
 		return api.post('/users/register', data);
 	}
-	static logout(refreshToken: string) {
+	static logout() {
 		return api.delete('/users/logout', {
 			headers: {
-				authorization: `Bearer ${refreshToken}`,
+				authorization: `Bearer ${getToken('refresh-token')}`,
 			},
 		});
 	}

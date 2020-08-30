@@ -5,9 +5,9 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form } from 'formik';
-import { TextBox, Alert } from '../../components/CustomField';
-import { useCommonStyles } from '../../styles/commonStyle';
-import { config } from '../../config/app';
+import { TextBox, Alert } from '../../../components/CustomField';
+import { useCommonStyles } from '../../../styles/commonStyle';
+import { config } from '../../../config/app';
 
 const initValues: PostField = {
 	title: '',

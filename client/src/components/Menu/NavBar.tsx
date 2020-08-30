@@ -15,7 +15,7 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import { NavLink } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { config } from '../../config/app';
-import { logout } from '../../utils';
+import { logout, checkSocialAccount } from '../../utils';
 
 interface NavBarProps {
 	classes: any;
@@ -31,12 +31,6 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 
 		const handleMenu = (e: any) => setAnchorEl(e.currentTarget);
 		const handleClose = () => setAnchorEl(null);
-
-		const handleLogout = () => {
-			logout();
-			window.location.reload();
-			setAnchorEl(null);
-		};
 
 		return (
 			<AppBar
@@ -91,22 +85,27 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 						</>
 					) : (
 						<>
-							<Fab variant="extended" color="default" onClick={handleMenu}>
-								{profile.user?.avatar ? (
-									<Avatar
-										alt="Avatar NavBar"
-										src={
-											!!profile?.user?.google || !!profile?.user?.facebook
-												? (profile.user.avatar as string)
-												: `${config.API_URL}/images/${profile.user.avatar}`
-										}
-										style={{ marginRight: 10 }}
-									/>
-								) : (
-									<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
-								)}
-								{profile.user?.username}
-							</Fab>
+							{profile.user ? (
+								<Fab variant="extended" color="default" onClick={handleMenu}>
+									{profile.user.avatar ? (
+										<Avatar
+											alt="Avatar NavBar"
+											src={
+												checkSocialAccount(profile.user)
+													? (profile.user.avatar as string)
+													: `${config.API_URL}/images/${profile.user.avatar}`
+											}
+											style={{ marginRight: 10 }}
+										/>
+									) : (
+										<AccountCircle
+											fontSize="large"
+											style={{ marginRight: 10 }}
+										/>
+									)}
+									{profile.user?.username}
+								</Fab>
+							) : null}
 							<Menu
 								anchorEl={anchorEl}
 								anchorOrigin={{
@@ -128,7 +127,7 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 								>
 									Profile
 								</MenuItem>
-								<MenuItem onClick={handleLogout}>Log out</MenuItem>
+								<MenuItem onClick={logout}>Log out</MenuItem>
 							</Menu>
 						</>
 					)}

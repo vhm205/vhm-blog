@@ -15,6 +15,13 @@ CategorySchema.statics = {
 	getCategoryByName(name) {
 		return this.findOne({ name });
 	},
+	getAllCategories(skip, limit) {
+		return this.find({}).sort({ createdAt: -1 });
+		// return this.find({}).skip(skip).limit(limit).sort({ createdAt: -1 });
+	},
+	getTotalCategories() {
+		return this.countDocuments({});
+	},
 };
 
 module.exports = mongoose.model('Category', CategorySchema);

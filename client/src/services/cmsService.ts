@@ -1,5 +1,5 @@
 import api from './api';
-import cookie from 'react-cookies';
+import { getToken } from '../utils';
 
 type DataCategory = Omit<CategoryField, 'message'>;
 type DataPost = Omit<PostField, 'message'>;
@@ -8,7 +8,7 @@ export default class CmsAPI {
 	path: string = '/cms';
 
 	constructor(token?: string) {
-		const tokenBearer = token ? token : cookie.load('token');
+		const tokenBearer = token ? token : getToken();
 		if (tokenBearer) {
 			api.defaults.headers.common['authorization'] = `Bearer ${tokenBearer}`;
 		}
@@ -18,5 +18,12 @@ export default class CmsAPI {
 	}
 	addPost(data: DataPost) {
 		return api.post(`${this.path}/add-post`, data);
+	}
+	static getCategories(page: number) {
+		return api.get(`/cms/all-categories/${page}`, {
+			headers: {
+				authorization: `Bearer ${getToken()}`,
+			},
+		});
 	}
 }

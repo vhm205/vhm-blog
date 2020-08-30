@@ -29,7 +29,7 @@ const NavBar: React.FC<RouteComponentProps> = ({ history }) => {
 
 	const handleLogout = () => {
 		if (isAuthenticated) {
-			UserAPI.logout(cookie.load('refreshToken')).then(() => {
+			UserAPI.logout().then(() => {
 				cookie.remove('token');
 				cookie.remove('refreshToken');
 				history.push('/login');

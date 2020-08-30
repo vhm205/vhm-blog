@@ -12,13 +12,18 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 
-import { Formik, Form } from 'formik';
 import {
 	TextBox,
 	RadioGroupWithLabel,
 	Alert,
 } from '../../components/CustomField';
-import { showPreviewAvatar, validImage, checkSocialAccount } from '../../utils';
+import {
+	showPreviewAvatar,
+	validImage,
+	checkSocialAccount,
+	handleErrors,
+} from '../../utils';
+import { Formik, Form } from 'formik';
 import { config } from '../../config/app';
 import { useParams } from 'react-router-dom';
 import cookie from 'react-cookies';
@@ -78,16 +83,7 @@ const Profile: React.FC = () => {
 				initialValues={initValues}
 				validateOnChange={false}
 				validationSchema={profileSchema.default}
-				onSubmit={async (values, { setErrors }) => {
-					if (isSocialAccount) {
-						setNotify({
-							open: true,
-							type: 'warning',
-							message: "You can't update profile with social account",
-						});
-						return;
-					}
-
+				onSubmit={async (values) => {
 					try {
 						const userApi = new UserAPI();
 						const frmData = new FormData();
@@ -121,11 +117,13 @@ const Profile: React.FC = () => {
 							message: result.message,
 						});
 					} catch (error) {
-						console.error(error, error.response, error.message);
+						const { data } = error.response;
+						const message = handleErrors(data);
+
 						setNotify({
 							open: true,
 							type: 'error',
-							message: error.response.data[0],
+							message: message,
 						});
 					}
 				}}

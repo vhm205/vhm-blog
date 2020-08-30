@@ -1,6 +1,7 @@
 import { RefObject } from 'react';
 import UserAPI from '../services/userService';
 import cookie from 'react-cookies';
+import moment from 'moment';
 
 export const isAuthenticated = !!(
 	cookie.load('token') && cookie.load('refreshToken')
@@ -10,13 +11,25 @@ export const checkSocialAccount = (user: User) => {
 	return !!user.google || !!user.facebook;
 };
 
-export const logout = () => {
-	console.log(isAuthenticated);
-
+export const getToken = (type: string = 'token') => {
 	if (isAuthenticated) {
-		UserAPI.logout(cookie.load('refreshToken')).then(() => {
+		switch (type) {
+			case 'token':
+				return cookie.load('token');
+			case 'refresh-token':
+				return cookie.load('refreshToken');
+		}
+	}
+
+	return isAuthenticated;
+};
+
+export const logout = async () => {
+	if (isAuthenticated) {
+		UserAPI.logout().then(() => {
 			cookie.remove('token');
 			cookie.remove('refreshToken');
+			window.location.reload();
 		});
 	}
 };
@@ -63,15 +76,12 @@ export const validImage = (file: File): { status: string; message: string } => {
 	};
 };
 
-export const handleErrors = (errors: ErrorType) => {
-	let message = '';
-	if ('message' in errors) {
-		message = errors.message;
-	} else {
-		message = errors.errors[0];
-	}
+export const handleErrors = (errors: ErrorType) =>
+	'message' in errors ? errors.message : errors.errors[0];
 
-	return message;
+export const formatToHumanTime = (timestamp: number | undefined) => {
+	if (!timestamp) return '';
+	return moment(timestamp).locale('vi').startOf('seconds').fromNow();
 };
 
 export const slugify = (text: string, separator: string = '-') =>

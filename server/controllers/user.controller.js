@@ -60,7 +60,6 @@ const getRefreshToken = async (req, res) => {
 
 const getProfile = async (req, res) => {
 	try {
-		console.log(req.isAuthenticated());
 		if (!req.user) return res.status(401).json({ message: 'Token is Expired' });
 		return res.status(200).json(req.user);
 	} catch (error) {
