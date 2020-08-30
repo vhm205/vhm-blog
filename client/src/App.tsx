@@ -10,8 +10,8 @@ import { NotFound } from './components/errors';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
-import AddPost from './pages/CMS/AddPost';
-import AddCategory from './pages/CMS/AddCategory';
+import AddPost from './pages/CMS/Posts/AddPost';
+import AddCategory from './pages/CMS/Categories/AddCategory';
 
 import { UserProvider } from './context/UserContext';
 import { GlobalStyle } from './styles/globalStyle';

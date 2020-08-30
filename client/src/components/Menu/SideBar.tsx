@@ -67,13 +67,7 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 				</List>
 				<Divider />
 				<List>
-					<ListItem
-						button
-						onClick={() => {
-							logout();
-							window.location.reload();
-						}}
-					>
+					<ListItem button onClick={logout}>
 						<ListItemIcon>
 							<ExitToApp />
 						</ListItemIcon>

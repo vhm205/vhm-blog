@@ -54,7 +54,7 @@ const SideBar: React.FC = () => {
 
 	const handleLogout = () => {
 		if (isAuthenticated) {
-			UserAPI.logout(cookie.load('refreshToken')).then(() => {
+			UserAPI.logout().then(() => {
 				cookie.remove('token');
 				cookie.remove('refreshToken');
 				window.location.reload();
