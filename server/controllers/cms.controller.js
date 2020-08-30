@@ -28,20 +28,20 @@ const addPost = async (req, res) => {
 
 const getAllCategories = async (req, res) => {
 	try {
-		const currentPage = req.params.page;
-		console.log(currentPage, typeof currentPage);
+		const currentPage = +req.params.page;
+		const skip = currentPage * LIMIT_CATEGORIES - LIMIT_CATEGORIES;
 
-		const getTotalCategories = await CategoryModel.getTotalCategories();
-		const getAllCategories = await CategoryModel.getAllCategories(
-			0,
+		const totalCategories = await CategoryModel.getTotalCategories();
+		const allCategories = await CategoryModel.getAllCategories(
+			skip,
 			LIMIT_CATEGORIES
 		);
 
 		return res.status(200).json({
-			categories: getAllCategories,
+			categories: allCategories,
+			total: totalCategories,
+			page: currentPage,
 			perPage: LIMIT_CATEGORIES,
-			total: getTotalCategories,
-			page: +currentPage,
 		});
 	} catch (error) {
 		return res.status(400).json(error);

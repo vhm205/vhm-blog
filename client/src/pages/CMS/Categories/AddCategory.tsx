@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -9,8 +9,9 @@ import { TextBox, Alert } from '../../../components/CustomField';
 import { useCommonStyles } from '../../../styles/commonStyle';
 import { slugify, handleErrors } from '../../../utils';
 import { categorySchema } from '../../../validations/cms';
-import ListCategories from './ListCategories';
 import CmsAPI from '../../../services/cmsService';
+
+const ListCategories = lazy(() => import('./ListCategories'));
 
 const initValues: CategoryField = {
 	name: '',
@@ -19,23 +20,11 @@ const initValues: CategoryField = {
 
 const AddCategory: React.FC = () => {
 	const classes = useCommonStyles();
-	const [categories, setCategories] = useState<CategoriesResponse | null>(null);
 	const [notify, setNotify] = useState<NotificationType>({
 		type: '',
 		message: '',
 		open: false,
 	});
-
-	useEffect(() => {
-		(async () => {
-			try {
-				const result: responseCategories = await CmsAPI.getCategories(1);
-				setCategories(result);
-			} catch (error) {
-				console.error(error, error.response, error.message);
-			}
-		})();
-	}, []);
 
 	const handleClose = (): void =>
 		setNotify((prevValue: NotificationType) => ({ ...prevValue, open: false }));
@@ -46,12 +35,13 @@ const AddCategory: React.FC = () => {
 				<Formik
 					initialValues={initValues}
 					validationSchema={categorySchema}
-					onSubmit={async (values) => {
+					onSubmit={async (values, { resetForm }) => {
 						try {
 							const cms = new CmsAPI();
 							values.slug = slugify(values.name);
 
 							const result: responseWithMessage = await cms.addCategory(values);
+							resetForm();
 							setNotify({
 								type: 'success',
 								message: result.message,
@@ -71,7 +61,7 @@ const AddCategory: React.FC = () => {
 				>
 					{({ handleSubmit, isSubmitting }) => (
 						<>
-							<Grid item xs={4}>
+							<Grid item sm={4} xs={12}>
 								<Form onSubmit={handleSubmit}>
 									<Typography variant="h5" style={{ marginTop: 30 }}>
 										Add Category
@@ -100,8 +90,10 @@ const AddCategory: React.FC = () => {
 									</Snackbar>
 								</Form>
 							</Grid>
-							<Grid item xs={8}>
-								<ListCategories categories={categories} />
+							<Grid item sm={8} xs={12}>
+								<Suspense fallback={<div>Loading...</div>}>
+									<ListCategories />
+								</Suspense>
 							</Grid>
 						</>
 					)}
