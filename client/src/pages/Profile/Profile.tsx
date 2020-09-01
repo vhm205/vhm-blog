@@ -1,7 +1,6 @@
 import React, { useRef, useState, ChangeEvent } from 'react';
 import { useUser } from '../../context/UserContext';
 import { makeStyles } from '@material-ui/core/styles';
-import Snackbar from '@material-ui/core/Snackbar';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
@@ -12,11 +11,7 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 
-import {
-	TextBox,
-	RadioGroupWithLabel,
-	Alert,
-} from '../../components/CustomField';
+import { TextBox, RadioGroupWithLabel } from '../../components/CustomField';
 import {
 	showPreviewAvatar,
 	validImage,
@@ -26,6 +21,7 @@ import {
 import { Formik, Form } from 'formik';
 import { config } from '../../config/app';
 import { useParams } from 'react-router-dom';
+import { Notify } from '../../components';
 import cookie from 'react-cookies';
 import * as profileSchema from '../../validations/profile';
 import UserAPI from '../../services/userService';
@@ -70,12 +66,9 @@ const Profile: React.FC = () => {
 		return <div>Loading...</div>;
 	}
 	initValues = { ...profile.user };
-	const { user } = profile;
 
+	const user = profile.user;
 	const isSocialAccount = checkSocialAccount(user);
-
-	const handleClose = (): void =>
-		setNotify((prevValue: NotificationType) => ({ ...prevValue, open: false }));
 
 	return (
 		<Paper elevation={3} className={classes.paper}>
@@ -212,16 +205,15 @@ const Profile: React.FC = () => {
 								>
 									Update Profile
 								</Button>
-								<Snackbar
-									open={notify.open}
-									autoHideDuration={5000}
-									onClose={handleClose}
-									anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-								>
-									<Alert onClose={handleClose} severity={notify.type}>
-										{notify.message}
-									</Alert>
-								</Snackbar>
+								<Notify
+									notify={notify}
+									handleClose={() =>
+										setNotify((prevValue: NotificationType) => ({
+											...prevValue,
+											open: false,
+										}))
+									}
+								/>
 							</Form>
 						</Grid>
 					</Grid>

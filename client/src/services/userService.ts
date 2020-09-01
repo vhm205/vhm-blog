@@ -1,5 +1,5 @@
 import api from './api';
-import { getToken } from '../utils';
+import { getToken, setHeaderToken } from '../utils';
 
 type DataLogin = Omit<LoginField, 'remember' | 'message'>;
 type DataRegister = Omit<RegisterField, 'remember' | 'message'>;
@@ -27,9 +27,7 @@ export default class UserAPI {
 	}
 	static logout() {
 		return api.delete('/users/logout', {
-			headers: {
-				authorization: `Bearer ${getToken('refresh-token')}`,
-			},
+			headers: setHeaderToken(getToken('refresh-token')),
 		});
 	}
 }

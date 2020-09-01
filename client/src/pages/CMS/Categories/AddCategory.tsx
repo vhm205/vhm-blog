@@ -13,7 +13,7 @@ import CmsAPI from '../../../services/cmsService';
 
 const ListCategories = lazy(() => import('./ListCategories'));
 
-const initValues: CategoryField = {
+const initValues: Omit<CategoryField, '_id'> = {
 	name: '',
 	slug: '',
 };

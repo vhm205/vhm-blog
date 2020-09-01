@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import Snackbar from '@material-ui/core/Snackbar';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form } from 'formik';
-import { TextBox, Alert } from '../../../components/CustomField';
+import { TextBox } from '../../../components/CustomField';
 import { useCommonStyles } from '../../../styles/commonStyle';
 import { config } from '../../../config/app';
+import CmsAPI from '../../../services/cmsService';
+
+type CategoryName = Pick<CategoryField, 'name'>;
 
 const initValues: PostField = {
 	title: '',
@@ -30,27 +34,36 @@ const initEditor = {
 
 const AddPost: React.FC = () => {
 	const classes = useCommonStyles();
-	const [content, setContent] = useState();
-	const [notify, setNotify] = useState<NotificationType>({
-		type: '',
-		message: '',
-		open: false,
-	});
+	const [content, setContent] = useState('');
+	const [category, setCategory] = useState('');
+	const [categories, setCategories] = useState<CategoryName[]>([]);
 
-	const handleClose = (): void =>
-		setNotify((prevValue: NotificationType) => ({ ...prevValue, open: false }));
+	useEffect(() => {
+		getCategories();
+	}, []);
+
+	const getCategories = async () => {
+		try {
+			const result: responseCategories = await CmsAPI.getAllCategories();
+			setCategories(result.categories);
+		} catch {}
+	};
 
 	const handleContentChange = (content: any) => setContent(content);
+	const handleCategoryChange = (e: ChangeEvent<{}>, value: CategoryName) => {
+		console.log(e, value);
+	};
 
 	return (
 		<Paper elevation={3} className={classes.paper}>
 			<Formik
 				initialValues={initValues}
 				onSubmit={(values) => {
-					console.log(values, content);
+					values.content = content;
+					console.log(values);
 				}}
 			>
-				{({ values, handleSubmit, isSubmitting }) => (
+				{({ values, errors, handleSubmit, isSubmitting }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5" style={{ marginTop: 30 }}>
 							Add Post
@@ -61,6 +74,15 @@ const AddPost: React.FC = () => {
 							init={initEditor}
 							apiKey={config.TINY_API_KEY}
 							onEditorChange={handleContentChange}
+						/>
+						<Autocomplete
+							options={categories}
+							getOptionLabel={(option) => option.name}
+							style={{ width: 300, marginTop: 10 }}
+							loadingText="Loading..."
+							renderInput={(params) => (
+								<TextField {...params} label="Categories" variant="outlined" />
+							)}
 						/>
 						<Button
 							type="submit"
@@ -73,16 +95,7 @@ const AddPost: React.FC = () => {
 							Add New Post
 						</Button>
 						<pre>{JSON.stringify(values, null, 2)}</pre>
-						<Snackbar
-							open={notify.open}
-							autoHideDuration={5000}
-							onClose={handleClose}
-							anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-						>
-							<Alert onClose={handleClose} severity={notify.type}>
-								{notify.message}
-							</Alert>
-						</Snackbar>
+						<pre>{JSON.stringify(errors, null, 2)}</pre>
 					</Form>
 				)}
 			</Formik>

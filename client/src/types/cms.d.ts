@@ -16,7 +16,7 @@ interface PostField {
 }
 
 interface CategoryField {
-	_id?: string;
+	_id: string;
 	name: string;
 	slug: string;
 	parentId?: number;

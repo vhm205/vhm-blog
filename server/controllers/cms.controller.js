@@ -26,19 +26,19 @@ const addPost = async (req, res) => {
 	}
 };
 
-const getAllCategories = async (req, res) => {
+const getCategories = async (req, res) => {
 	try {
 		const currentPage = +req.params.page;
 		const skip = currentPage * LIMIT_CATEGORIES - LIMIT_CATEGORIES;
 
 		const totalCategories = await CategoryModel.getTotalCategories();
-		const allCategories = await CategoryModel.getAllCategories(
+		const getCategories = await CategoryModel.getCategories(
 			skip,
 			LIMIT_CATEGORIES
 		);
 
 		return res.status(200).json({
-			categories: allCategories,
+			categories: getCategories,
 			total: totalCategories,
 			page: currentPage,
 			perPage: LIMIT_CATEGORIES,
@@ -48,8 +48,29 @@ const getAllCategories = async (req, res) => {
 	}
 };
 
+const getAllCategories = async (_, res) => {
+	try {
+		const allCategories = await CategoryModel.getAllCategories();
+
+		return res.status(200).json({ categories: allCategories });
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
+const deleteCategories = async (req, res) => {
+	try {
+		await CategoryModel.deleteCategories(req.body);
+		return res.sendStatus(204);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports = {
 	addCategory,
 	addPost,
+	getCategories,
 	getAllCategories,
+	deleteCategories,
 };

@@ -24,6 +24,12 @@ export const getToken = (type: string = 'token') => {
 	return isAuthenticated;
 };
 
+export const setHeaderToken = (token: string) => {
+	return {
+		authorization: `Bearer ${token}`,
+	};
+};
+
 export const logout = async () => {
 	if (isAuthenticated) {
 		UserAPI.logout().then(() => {
