@@ -4,10 +4,12 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Alert from '@material-ui/lab/Alert';
 import { Editor } from '@tinymce/tinymce-react';
-import { Formik, Form } from 'formik';
+import { Formik, Form, FormikValues, FormikErrors } from 'formik';
 import { TextBox } from '../../../components/CustomField';
 import { useCommonStyles } from '../../../styles/commonStyle';
+import { handleErrors } from '../../../utils';
 import { config } from '../../../config/app';
 import CmsAPI from '../../../services/cmsService';
 
@@ -46,44 +48,93 @@ const AddPost: React.FC = () => {
 		try {
 			const result: responseCategories = await CmsAPI.getAllCategories();
 			setCategories(result.categories);
+			setCategory(result.categories[0].name);
 		} catch {}
 	};
 
 	const handleContentChange = (content: any) => setContent(content);
-	const handleCategoryChange = (e: ChangeEvent<{}>, value: CategoryName) => {
-		console.log(e, value);
+
+	const handleCategoryChange = (_: ChangeEvent<{}>, value: any) => {
+		if (value) {
+			setCategory(value.name);
+		}
 	};
 
 	return (
 		<Paper elevation={3} className={classes.paper}>
 			<Formik
 				initialValues={initValues}
-				onSubmit={(values) => {
+				validate={(values: FormikValues) => {
+					const errors: FormikErrors<PostField> = {};
+					if (!values.title) {
+						errors.title = "Title can't empty";
+					}
+
+					if (!content) {
+						errors.content = "Content can't empty";
+					}
+
+					if (!category) {
+						errors.category = 'You need to choose a category for your post';
+					}
+
+					return errors;
+				}}
+				onSubmit={async (values, { setStatus, resetForm }) => {
 					values.content = content;
-					console.log(values);
+					values.category = category;
+					try {
+						const cms = new CmsAPI();
+						await cms.addPost(values);
+						resetForm();
+						setContent('');
+						setStatus('A Post Created');
+					} catch (error) {
+						const message = handleErrors(error.response.data);
+						setStatus(message ? message : 'An Error Occur in create a post');
+					} finally {
+						setTimeout(() => {
+							setStatus('');
+						}, 30000);
+					}
 				}}
 			>
-				{({ values, errors, handleSubmit, isSubmitting }) => (
+				{({ errors, touched, status, handleSubmit, isSubmitting }) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5" style={{ marginTop: 30 }}>
 							Add Post
 						</Typography>
 						<TextBox name="title" placeholder="Title..." />
 						<Editor
-							textareaName="content"
+							value={content}
 							init={initEditor}
 							apiKey={config.TINY_API_KEY}
 							onEditorChange={handleContentChange}
 						/>
-						<Autocomplete
-							options={categories}
-							getOptionLabel={(option) => option.name}
-							style={{ width: 300, marginTop: 10 }}
-							loadingText="Loading..."
-							renderInput={(params) => (
-								<TextField {...params} label="Categories" variant="outlined" />
-							)}
-						/>
+						{categories.length && (
+							<Autocomplete
+								options={categories}
+								getOptionLabel={(option) => option.name}
+								style={{ width: 300, marginTop: 10, marginBottom: 10 }}
+								loadingText="Loading..."
+								defaultValue={{ name: categories[0].name }}
+								onChange={handleCategoryChange}
+								renderInput={(params) => (
+									<TextField
+										{...params}
+										label="Categories"
+										variant="outlined"
+									/>
+								)}
+							/>
+						)}
+						{errors.content && touched.content && (
+							<Alert severity="error">{errors.content}</Alert>
+						)}
+						{errors.category && touched.category && (
+							<Alert severity="error">{errors.category}</Alert>
+						)}
+						{status && <Alert severity="info">{status}</Alert>}
 						<Button
 							type="submit"
 							disabled={isSubmitting}
@@ -94,8 +145,6 @@ const AddPost: React.FC = () => {
 						>
 							Add New Post
 						</Button>
-						<pre>{JSON.stringify(values, null, 2)}</pre>
-						<pre>{JSON.stringify(errors, null, 2)}</pre>
 					</Form>
 				)}
 			</Formik>
