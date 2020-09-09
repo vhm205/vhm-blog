@@ -19,7 +19,14 @@ const addCategory = async (req, res) => {
 
 const addPost = async (req, res) => {
 	try {
-		console.log(req.body);
+		const checkPostExist = await PostModel.checkPostExists(
+			req.body.title,
+			req.body.content
+		);
+		if (checkPostExist)
+			return res.status(400).json({ message: 'This post existed' });
+
+		await PostModel.createPost(req.body);
 		return res.sendStatus(201);
 	} catch (error) {
 		return res.status(400).json(error);

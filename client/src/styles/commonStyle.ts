@@ -18,4 +18,8 @@ export const useCommonStyles = makeStyles((theme: Theme) => ({
 	btnSubmit: {
 		marginTop: 10,
 	},
+	error: {
+		color: '#f44336',
+		padding: theme.spacing(1),
+	},
 }));

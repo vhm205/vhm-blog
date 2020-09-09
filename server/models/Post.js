@@ -9,4 +9,13 @@ const PostSchema = new mongoose.Schema({
 	updatedAt: { type: Number, default: null },
 });
 
+PostSchema.statics = {
+	createPost(items) {
+		return this.create(items);
+	},
+	checkPostExists(title, content) {
+		return this.findOne({ $or: [{ title }, { content }] });
+	},
+};
+
 module.exports = mongoose.model('Post', PostSchema);
