@@ -26,7 +26,9 @@ export const getToken = (type: string = 'token') => {
 
 export const setHeaderToken = (token: string) => {
 	return {
-		authorization: `Bearer ${token}`,
+		headers: {
+			authorization: `Bearer ${token}`,
+		},
 	};
 };
 

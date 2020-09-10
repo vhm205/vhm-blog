@@ -15,9 +15,8 @@ interface SocialAccountType {
 	facebook: boolean;
 }
 
-interface ColumnCategory {
-	id: 'stt' | 'name' | 'slug' | 'date';
-	label: string;
-	minWidth?: number;
-	align?: 'right' | 'left' | 'center';
+interface PaginationType {
+	perPage: number;
+	total: number;
+	page: number;
 }

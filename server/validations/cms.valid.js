@@ -9,6 +9,7 @@ const postSchema = Joi.object({
 	title: Joi.string().min(3).max(100).required(),
 	content: Joi.string().min(50).required(),
 	category: Joi.string().required(),
+	slug: Joi.string().required(),
 	author: Joi.string().allow('Admin', 'User').default('Admin'),
 });
 
