@@ -12,6 +12,7 @@ import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
 import AddPost from './pages/CMS/Posts/AddPost';
 import AddCategory from './pages/CMS/Categories/AddCategory';
+import AllPosts from './pages/CMS/Posts/ListPosts';
 
 import { UserProvider } from './context/UserContext';
 import { GlobalStyle } from './styles/globalStyle';
@@ -31,6 +32,7 @@ const App: React.FC = () => {
 					/>
 					<PrivateRoute path="/add-post" component={AddPost} />
 					<PrivateRoute path="/add-category" component={AddCategory} />
+					<PrivateRoute path="/all-posts" component={AllPosts} />
 					<PublicRoute component={NotFound} />
 				</Switch>
 				<GlobalStyle />

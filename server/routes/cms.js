@@ -2,8 +2,9 @@ const router = require('express').Router();
 const { validate, auth } = require('../middleware');
 const { categorySchema, postSchema } = require('../validations/cms.valid');
 const {
-	addCategory,
 	addPost,
+	getPosts,
+	addCategory,
 	getCategories,
 	getAllCategories,
 	deleteCategories,
@@ -22,5 +23,6 @@ router.delete('/delete-categories', auth.authToken, deleteCategories);
 
 // Route for Posts
 router.post('/add-post', auth.authToken, validate(postSchema), addPost);
+router.get('/get-posts/:page', auth.authToken, getPosts);
 
 module.exports = router;

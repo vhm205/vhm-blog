@@ -5,33 +5,22 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Alert from '@material-ui/lab/Alert';
+import { TextBox } from '../../../components/CustomField';
 import { Editor } from '@tinymce/tinymce-react';
 import { Formik, Form, FormikValues, FormikErrors } from 'formik';
-import { TextBox } from '../../../components/CustomField';
 import { useCommonStyles } from '../../../styles/commonStyle';
-import { handleErrors } from '../../../utils';
+import { handleErrors, slugify } from '../../../utils';
 import { config } from '../../../config/app';
 import CmsAPI from '../../../services/cmsService';
 
 type CategoryName = Pick<CategoryField, 'name'>;
 
 const initValues: PostField = {
+	_id: '',
 	title: '',
 	content: '',
 	category: '',
-};
-
-const initEditor = {
-	height: 350,
-	plugins: [
-		'advlist autolink lists link image charmap print preview anchor',
-		'searchreplace visualblocks code fullscreen',
-		'insertdatetime media table paste code help wordcount',
-	],
-	toolbar:
-		'undo redo | formatselect | bold italic backcolor | \
-		alignleft aligncenter alignright alignjustify | \
-		bullist numlist outdent indent | removeformat | help',
+	slug: '',
 };
 
 const AddPost: React.FC = () => {
@@ -66,26 +55,38 @@ const AddPost: React.FC = () => {
 				initialValues={initValues}
 				validate={(values: FormikValues) => {
 					const errors: FormikErrors<PostField> = {};
-					if (!values.title) {
-						errors.title = "Title can't empty";
+					if (
+						!values.title ||
+						values.title.length < 3 ||
+						values.title.length > 100
+					) {
+						errors.title =
+							"Title can't empty, at least 3 Character (Maximum 100)";
 					}
 
-					if (!content) {
-						errors.content = "Content can't empty";
+					if (!content || content.length < 50) {
+						errors.content = "Content can't empty, at least 50 Character";
+					}
+
+					if (!values.slug) {
+						errors.slug = 'Slug is required';
 					}
 
 					if (!category) {
-						errors.category = 'You need to choose a category for your post';
+						errors.category = 'You need to choose a category for post';
 					}
 
 					return errors;
 				}}
 				onSubmit={async (values, { setStatus, resetForm }) => {
-					values.content = content;
-					values.category = category;
 					try {
 						const cms = new CmsAPI();
-						await cms.addPost(values);
+						await cms.addPost({
+							title: values.title,
+							slug: values.slug,
+							content: content,
+							category: category,
+						});
 						resetForm();
 						setContent('');
 						setStatus('A Post Created');
@@ -99,12 +100,28 @@ const AddPost: React.FC = () => {
 					}
 				}}
 			>
-				{({ errors, touched, status, handleSubmit, isSubmitting }) => (
+				{({
+					errors,
+					touched,
+					status,
+					handleSubmit,
+					handleChange,
+					isSubmitting,
+					setFieldValue,
+				}) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5" style={{ marginTop: 30 }}>
 							Add Post
 						</Typography>
-						<TextBox name="title" placeholder="Title..." />
+						<TextBox
+							name="title"
+							placeholder="Title..."
+							onChange={(e: ChangeEvent<HTMLInputElement>) => {
+								handleChange(e);
+								setFieldValue('slug', slugify(e.currentTarget.value));
+							}}
+						/>
+						<TextBox name="slug" placeholder="Slug..." disabled={true} />
 						<Editor
 							value={content}
 							init={initEditor}
@@ -150,6 +167,19 @@ const AddPost: React.FC = () => {
 			</Formik>
 		</Paper>
 	);
+};
+
+const initEditor = {
+	height: 350,
+	plugins: [
+		'advlist autolink lists link image charmap print preview anchor',
+		'searchreplace visualblocks code fullscreen',
+		'insertdatetime media table paste code help wordcount',
+	],
+	toolbar:
+		'undo redo | formatselect | bold italic backcolor | \
+		alignleft aligncenter alignright alignjustify | \
+		bullist numlist outdent indent | removeformat | help',
 };
 
 export default AddPost;

@@ -1,4 +1,4 @@
-import React, { ClassAttributes } from 'react';
+import React, { ClassAttributes, ChangeEvent } from 'react';
 import { useField, FieldAttributes } from 'formik';
 import { TextFieldProps } from '@material-ui/core/TextField';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -10,7 +10,6 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 
-// type VariantTextFieldProps = 'filled' | 'standard' | 'outlined';
 type TextBoxProps = FieldAttributes<{}> &
 	ClassAttributes<HTMLInputElement> &
 	TextFieldProps & {
@@ -18,10 +17,14 @@ type TextBoxProps = FieldAttributes<{}> &
 		type?: string;
 		disabled?: boolean;
 		pattern?: RegExp | string;
+		onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	};
 
 export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
-	({ placeholder, type, variant, disabled, pattern, ...props }, ref) => {
+	(
+		{ placeholder, type, variant, disabled, pattern, onChange, ...props },
+		ref
+	) => {
 		const [field, meta] = useField<{}>(props);
 		const errStr = meta.touched && meta.error;
 
@@ -38,6 +41,7 @@ export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 				helperText={errStr}
 				inputProps={pattern ? { pattern } : {}}
 				error={!!errStr}
+				onChange={onChange ? onChange : field.onChange}
 				fullWidth
 			/>
 		);

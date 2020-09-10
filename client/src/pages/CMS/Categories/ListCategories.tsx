@@ -16,9 +16,15 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ReplayIcon from '@material-ui/icons/Replay';
-import moment from 'moment';
 import CmsAPI from '../../../services/cmsService';
 import { Notify } from '../../../components';
+
+interface ColumnCategory {
+	id: 'stt' | 'name' | 'slug' | 'date';
+	label: string;
+	minWidth?: number;
+	align?: 'right' | 'left' | 'center';
+}
 
 const columns: ColumnCategory[] = [
 	{ id: 'stt', label: 'Stt', align: 'left', minWidth: 50 },
@@ -185,7 +191,7 @@ const ListCategories: React.FC = () => {
 								<TableCell align="left">{category.name}</TableCell>
 								<TableCell align="left">{category.slug}</TableCell>
 								<TableCell align="left">
-									{moment(category.createdAt).format('LLL')}
+									{new Date(category.createdAt as number).toLocaleString()}
 								</TableCell>
 							</TableRow>
 						))}

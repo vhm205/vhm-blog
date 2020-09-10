@@ -13,6 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import PostAdd from '@material-ui/icons/PostAdd';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import ExitToApp from '@material-ui/icons/ExitToApp';
+import AllInclusiveIcon from '@material-ui/icons/AllInclusive';
 import { useHistory } from 'react-router-dom';
 import { logout } from '../../utils';
 
@@ -52,6 +53,12 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 				</div>
 				<Divider />
 				<List>
+					<ListItem button onClick={() => history.push('/all-posts')}>
+						<ListItemIcon>
+							<AllInclusiveIcon />
+						</ListItemIcon>
+						<ListItemText primary="All Posts" />
+					</ListItem>
 					<ListItem button onClick={() => history.push('/add-post')}>
 						<ListItemIcon>
 							<PostAdd />

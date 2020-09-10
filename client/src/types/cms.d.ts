@@ -1,17 +1,22 @@
 type CategoriesResponse = {
 	categories: Array<CategoryField>;
-	perPage: number;
-	total: number;
-	page: number;
-};
+} & PaginationType;
+
+type PostsResponse = {
+	posts: Array<PostField>;
+} & PaginationType;
 
 type responseCategories = AxiosResponse & CategoriesResponse;
+type responsePosts = AxiosResponse & PostsResponse;
 
 interface PostField {
+	_id: string;
 	title: string;
 	content: string;
 	category: string;
+	slug: string;
 	author?: string;
+	createdAt?: number;
 	message?: string;
 }
 
