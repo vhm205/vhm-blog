@@ -10,9 +10,11 @@ import { NotFound } from './components/errors';
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
+
 import AddPost from './pages/CMS/Posts/AddPost';
-import AddCategory from './pages/CMS/Categories/AddCategory';
+import EditPost from './pages/CMS/Posts/EditPost';
 import AllPosts from './pages/CMS/Posts/ListPosts';
+import AddCategory from './pages/CMS/Categories/AddCategory';
 
 import { UserProvider } from './context/UserContext';
 import { GlobalStyle } from './styles/globalStyle';
@@ -32,6 +34,7 @@ const App: React.FC = () => {
 					/>
 					<PrivateRoute path="/add-post" component={AddPost} />
 					<PrivateRoute path="/add-category" component={AddCategory} />
+					<PrivateRoute path="/edit-post/:post_id" component={EditPost} />
 					<PrivateRoute path="/all-posts" component={AllPosts} />
 					<PublicRoute component={NotFound} />
 				</Switch>

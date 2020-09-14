@@ -23,6 +23,12 @@ PostSchema.statics = {
 	getTotalPosts() {
 		return this.countDocuments({});
 	},
+	getPostById(id) {
+		return this.findOne({ _id: id });
+	},
+	updatePost(id, data) {
+		return this.updateOne({ _id: id }, { $set: data });
+	},
 	deletePosts(listId) {
 		return this.deleteMany({ _id: { $in: listId } });
 	},

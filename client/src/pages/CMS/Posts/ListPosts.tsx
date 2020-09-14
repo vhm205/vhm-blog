@@ -15,6 +15,7 @@ import ToolBarTable from '../components/ToolBarTable';
 import Notify from '../../../components/Notify';
 import CmsAPI from '../../../services/cmsService';
 import { useCommonStyles } from '../../../styles/commonStyle';
+import { RouteComponentProps } from 'react-router-dom';
 
 interface ColumnPost {
 	id: 'stt' | 'title' | 'slug' | 'date' | 'edit';
@@ -32,7 +33,7 @@ const columns: ColumnPost[] = [
 	{ id: 'edit', label: 'Edit', align: 'left', minWidth: 30 },
 ];
 
-const ListPosts: React.FC = () => {
+const ListPosts: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useCommonStyles();
 	const [listId, setListId] = useState<string[]>([]);
 	const [numSelected, setNumSelected] = useState<number>(0);
@@ -57,7 +58,7 @@ const ListPosts: React.FC = () => {
 			const result: responsePosts = await CmsAPI.getPosts(pagination.page);
 			setPagination(result);
 		} catch {}
-	}, []);
+	}, [pagination.page]);
 
 	const handleChangePage = (_: unknown, newPage: number) => {
 		setPagination((prevValue) => ({ ...prevValue, page: newPage + 1 }));
@@ -171,7 +172,12 @@ const ListPosts: React.FC = () => {
 									{new Date(post.createdAt as number).toLocaleString()}
 								</TableCell>
 								<TableCell>
-									<IconButton aria-label="edit">
+									<IconButton
+										aria-label="edit"
+										onClick={() => {
+											history.push(`/edit-post/${post._id}`);
+										}}
+									>
 										<EditIcon />
 									</IconButton>
 								</TableCell>

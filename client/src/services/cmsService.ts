@@ -22,6 +22,17 @@ export default class CmsAPI {
 	static getPosts(page: number) {
 		return api.get(`/cms/get-posts/${page}`);
 	}
+	static getPostById(postId: string) {
+		return api.get(`/cms/get-post/${postId}`);
+	}
+	static updatePost(data: DataPost & { id: string }) {
+		return api.patch(`/cms/update-post`, data);
+	}
+	static deletePosts(data: string[]) {
+		return api.delete('/cms/delete-posts', {
+			data: data,
+		});
+	}
 	static getCategories(page: number) {
 		return api.get(`/cms/get-categories/${page}`);
 	}
@@ -30,11 +41,6 @@ export default class CmsAPI {
 	}
 	static deleteCategories(data: string[]) {
 		return api.delete('/cms/delete-categories', {
-			data: data,
-		});
-	}
-	static deletePosts(data: string[]) {
-		return api.delete('/cms/delete-posts', {
 			data: data,
 		});
 	}

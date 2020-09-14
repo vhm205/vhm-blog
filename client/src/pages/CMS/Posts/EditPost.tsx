@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
+import CmsAPI from '../../../services/cmsService';
 import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -7,15 +8,15 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import Alert from '@material-ui/lab/Alert';
 import { TextBox } from '../../../components/CustomField';
 import { Editor } from '@tinymce/tinymce-react';
+import { useParams, RouteComponentProps } from 'react-router-dom';
 import { Formik, Form, FormikValues, FormikErrors } from 'formik';
 import { useCommonStyles } from '../../../styles/commonStyle';
 import { handleErrors, slugify } from '../../../utils';
 import { config } from '../../../config/app';
-import CmsAPI from '../../../services/cmsService';
 
 type CategoryName = Pick<CategoryField, 'name'>;
 
-const initValues: PostField = {
+let initValues: PostField = {
 	_id: '',
 	title: '',
 	content: '',
@@ -23,23 +24,34 @@ const initValues: PostField = {
 	slug: '',
 };
 
-const AddPost: React.FC = () => {
+const EditPost: React.FC<RouteComponentProps> = ({ history }) => {
 	const classes = useCommonStyles();
+	const { post_id } = useParams();
 	const [content, setContent] = useState('');
 	const [category, setCategory] = useState('');
 	const [categories, setCategories] = useState<CategoryName[]>([]);
+	const [post, setPost] = useState<PostField>();
 
 	useEffect(() => {
-		getCategories();
-	}, []);
+		(async () => {
+			try {
+				const result: responsePost = await CmsAPI.getPostById(post_id);
+				initValues = result;
+				setContent(result.content);
+				setCategory(result.category);
+				setPost(result);
+			} catch {}
+		})();
+	}, [post_id]);
 
-	const getCategories = async () => {
-		try {
-			const result: responseCategories = await CmsAPI.getAllCategories();
-			setCategories(result.categories);
-			setCategory(result.categories[0].name);
-		} catch {}
-	};
+	useEffect(() => {
+		(async () => {
+			try {
+				const result: responseCategories = await CmsAPI.getAllCategories();
+				setCategories(result.categories);
+			} catch {}
+		})();
+	}, []);
 
 	const handleContentChange = (content: any) => setContent(content);
 
@@ -49,7 +61,7 @@ const AddPost: React.FC = () => {
 		}
 	};
 
-	return (
+	return post ? (
 		<Paper elevation={3} className={classes.paper}>
 			<Formik
 				initialValues={initValues}
@@ -78,25 +90,21 @@ const AddPost: React.FC = () => {
 
 					return errors;
 				}}
-				onSubmit={async (values, { setStatus, resetForm }) => {
+				onSubmit={async (values, { setStatus }) => {
 					try {
-						const cms = new CmsAPI();
-						await cms.addPost({
+						const result = await CmsAPI.updatePost({
+							id: post._id,
 							title: values.title,
 							slug: values.slug,
 							content: content,
 							category: category,
 						});
-						resetForm();
-						setContent('');
-						setStatus('A Post Created');
+						if (result.status === 200) {
+							history.push('/all-posts');
+						}
 					} catch (error) {
 						const message = handleErrors(error.response.data);
 						setStatus(message ? message : 'An Error Occur in create a post');
-					} finally {
-						setTimeout(() => {
-							setStatus('');
-						}, 30000);
 					}
 				}}
 			>
@@ -111,7 +119,7 @@ const AddPost: React.FC = () => {
 				}) => (
 					<Form onSubmit={handleSubmit}>
 						<Typography variant="h5" style={{ marginTop: 30 }}>
-							Add Post
+							Edit Post
 						</Typography>
 						<TextBox
 							name="title"
@@ -134,7 +142,7 @@ const AddPost: React.FC = () => {
 								getOptionLabel={(option) => option.name}
 								style={{ width: 300, marginTop: 10, marginBottom: 10 }}
 								loadingText="Loading..."
-								defaultValue={{ name: categories[0].name }}
+								defaultValue={{ name: post.category }}
 								onChange={handleCategoryChange}
 								renderInput={(params) => (
 									<TextField
@@ -160,13 +168,15 @@ const AddPost: React.FC = () => {
 							variant="contained"
 							fullWidth
 						>
-							Add New Post
+							Update Post
 						</Button>
 					</Form>
 				)}
 			</Formik>
 		</Paper>
+	) : (
+		<div style={{ padding: 100, fontSize: 30 }}>Loading...</div>
 	);
 };
 
-export default AddPost;
+export default EditPost;
