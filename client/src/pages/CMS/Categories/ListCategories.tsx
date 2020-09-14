@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Swal, { SweetAlertResult } from 'sweetalert2';
+import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,13 +10,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
-import ReplayIcon from '@material-ui/icons/Replay';
 import CmsAPI from '../../../services/cmsService';
+import ToolBarTable from '../components/ToolBarTable';
 import { Notify } from '../../../components';
 
 interface ColumnCategory {
@@ -127,31 +122,12 @@ const ListCategories: React.FC = () => {
 
 	return (
 		<Paper className={classes.root}>
-			<Toolbar style={{ flex: 1, justifyContent: 'space-between' }}>
-				{numSelected > 0 ? (
-					<>
-						<Typography color="inherit" variant="subtitle1" component="div">
-							{numSelected} selected
-						</Typography>
-						<Tooltip title="Delete">
-							<IconButton aria-label="delete" onClick={handleDelete}>
-								<DeleteIcon />
-							</IconButton>
-						</Tooltip>
-					</>
-				) : (
-					<>
-						<Typography color="inherit" variant="h5" component="div">
-							Categories
-						</Typography>
-						<Tooltip title="Reload">
-							<IconButton aria-label="Reload" onClick={getCategories}>
-								<ReplayIcon />
-							</IconButton>
-						</Tooltip>
-					</>
-				)}
-			</Toolbar>
+			<ToolBarTable
+				title="Categories"
+				numSelected={numSelected}
+				handleDelete={handleDelete}
+				reloadData={getCategories}
+			/>
 			<TableContainer className={classes.container}>
 				<Table stickyHeader aria-label="sticky table">
 					<TableHead>
