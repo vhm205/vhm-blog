@@ -26,8 +26,9 @@ export default class UserAPI {
 		return api.post('/users/register', data);
 	}
 	static logout() {
-		return api.delete('/users/logout', {
-			headers: setHeaderToken(getToken('refresh-token')),
-		});
+		return api.delete(
+			'/users/logout',
+			setHeaderToken(getToken('refresh-token'))
+		);
 	}
 }

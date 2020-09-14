@@ -93,6 +93,33 @@ const getPosts = async (req, res) => {
 	}
 };
 
+const getPostById = async (req, res) => {
+	try {
+		const postId = req.params.post_id;
+		const post = await PostModel.getPostById(postId);
+
+		return res.status(200).json(post);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
+const updatePost = async (req, res) => {
+	try {
+		const { id, title, slug, content, category } = req.body;
+		await PostModel.updatePost(id, {
+			title: title,
+			slug: slug,
+			content: content,
+			category: category,
+			updatedAt: Date.now(),
+		});
+		return res.sendStatus(200);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const deletePosts = async (req, res) => {
 	try {
 		await PostModel.deletePosts(req.body);
@@ -105,8 +132,10 @@ const deletePosts = async (req, res) => {
 module.exports = {
 	addPost,
 	getPosts,
-	addCategory,
+	getPostById,
+	updatePost,
 	deletePosts,
+	addCategory,
 	getCategories,
 	getAllCategories,
 	deleteCategories,

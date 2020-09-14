@@ -9,6 +9,9 @@ type PostsResponse = {
 type responseCategories = AxiosResponse & CategoriesResponse;
 type responsePosts = AxiosResponse & PostsResponse;
 
+type responsePost = AxiosResponse & PostField;
+type responseCategory = AxiosResponse & CategoryField;
+
 interface PostField {
 	_id: string;
 	title: string;
