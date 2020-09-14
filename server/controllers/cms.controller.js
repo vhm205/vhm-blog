@@ -93,10 +93,20 @@ const getPosts = async (req, res) => {
 	}
 };
 
+const deletePosts = async (req, res) => {
+	try {
+		await PostModel.deletePosts(req.body);
+		return res.sendStatus(204);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports = {
 	addPost,
 	getPosts,
 	addCategory,
+	deletePosts,
 	getCategories,
 	getAllCategories,
 	deleteCategories,

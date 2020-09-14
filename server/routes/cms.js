@@ -5,6 +5,7 @@ const {
 	addPost,
 	getPosts,
 	addCategory,
+	deletePosts,
 	getCategories,
 	getAllCategories,
 	deleteCategories,
@@ -24,5 +25,6 @@ router.delete('/delete-categories', auth.authToken, deleteCategories);
 // Route for Posts
 router.post('/add-post', auth.authToken, validate(postSchema), addPost);
 router.get('/get-posts/:page', auth.authToken, getPosts);
+router.delete('/delete-posts', auth.authToken, deletePosts);
 
 module.exports = router;

@@ -13,36 +13,39 @@ interface ToolBarTableProps {
 	reloadData: () => void;
 }
 
-const ToolBarTable: React.FC<ToolBarTableProps> = React.memo(
-	({ title, numSelected, handleDelete, reloadData }) => {
-		return (
-			<Toolbar style={{ flex: 1, justifyContent: 'space-between' }}>
-				{numSelected > 0 ? (
-					<>
-						<Typography color="inherit" variant="subtitle1" component="div">
-							{numSelected} selected
-						</Typography>
-						<Tooltip title="Delete">
-							<IconButton aria-label="delete" onClick={handleDelete}>
-								<DeleteIcon />
-							</IconButton>
-						</Tooltip>
-					</>
-				) : (
-					<>
-						<Typography color="inherit" variant="h5" component="div">
-							{title}
-						</Typography>
-						<Tooltip title="Reload">
-							<IconButton aria-label="Reload" onClick={reloadData}>
-								<ReplayIcon />
-							</IconButton>
-						</Tooltip>
-					</>
-				)}
-			</Toolbar>
-		);
-	}
-);
+const ToolBarTable: React.FC<ToolBarTableProps> = ({
+	title,
+	numSelected,
+	handleDelete,
+	reloadData,
+}) => {
+	return (
+		<Toolbar style={{ flex: 1, justifyContent: 'space-between' }}>
+			{numSelected > 0 ? (
+				<>
+					<Typography color="inherit" variant="subtitle1" component="div">
+						{numSelected} selected
+					</Typography>
+					<Tooltip title="Delete">
+						<IconButton aria-label="delete" onClick={handleDelete}>
+							<DeleteIcon />
+						</IconButton>
+					</Tooltip>
+				</>
+			) : (
+				<>
+					<Typography color="inherit" variant="h5" component="div">
+						{title}
+					</Typography>
+					<Tooltip title="Reload">
+						<IconButton aria-label="Reload" onClick={reloadData}>
+							<ReplayIcon />
+						</IconButton>
+					</Tooltip>
+				</>
+			)}
+		</Toolbar>
+	);
+};
 
 export default ToolBarTable;

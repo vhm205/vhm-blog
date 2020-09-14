@@ -1,4 +1,5 @@
 import React, { useState, useEffect, ChangeEvent } from 'react';
+import Swal, { SweetAlertResult } from 'sweetalert2';
 import Paper from '@material-ui/core/Paper';
 import TableContainer from '@material-ui/core/TableContainer';
 import TablePagination from '@material-ui/core/TablePagination';
@@ -11,6 +12,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import IconButton from '@material-ui/core/IconButton';
 import EditIcon from '@material-ui/icons/Edit';
 import ToolBarTable from '../components/ToolBarTable';
+import Notify from '../../../components/Notify';
 import CmsAPI from '../../../services/cmsService';
 import { useCommonStyles } from '../../../styles/commonStyle';
 
@@ -34,6 +36,11 @@ const ListPosts: React.FC = () => {
 	const classes = useCommonStyles();
 	const [listId, setListId] = useState<string[]>([]);
 	const [numSelected, setNumSelected] = useState<number>(0);
+	const [notify, setNotify] = useState<NotificationType>({
+		type: '',
+		message: '',
+		open: false,
+	});
 	const [pagination, setPagination] = useState<PostsResponse>({
 		posts: [],
 		page: 1,
@@ -45,12 +52,12 @@ const ListPosts: React.FC = () => {
 		getPosts();
 	}, [pagination.page]);
 
-	const getPosts = async () => {
+	const getPosts = React.useCallback(async () => {
 		try {
 			const result: responsePosts = await CmsAPI.getPosts(pagination.page);
 			setPagination(result);
 		} catch {}
-	};
+	}, []);
 
 	const handleChangePage = (_: unknown, newPage: number) => {
 		setPagination((prevValue) => ({ ...prevValue, page: newPage + 1 }));
@@ -88,7 +95,32 @@ const ListPosts: React.FC = () => {
 		}
 	};
 
-	const handleDelete = () => {};
+	const handleDelete = () => {
+		Swal.fire({
+			position: 'center',
+			icon: 'question',
+			title: 'Do you want to delete these posts?',
+			backdrop: 'rgba(85,85,85, .4)',
+			allowOutsideClick: true,
+			showConfirmButton: true,
+			showCancelButton: true,
+		}).then(async (res: SweetAlertResult) => {
+			if (!res.isConfirmed) return;
+
+			try {
+				await CmsAPI.deletePosts(listId);
+				getPosts();
+
+				setNumSelected(0);
+				setListId([]);
+				setNotify({
+					open: true,
+					type: 'success',
+					message: 'Delete Successfully!',
+				});
+			} catch {}
+		});
+	};
 
 	return (
 		<Paper elevation={3} className={classes.paper}>
@@ -156,6 +188,15 @@ const ListPosts: React.FC = () => {
 				page={pagination.page - 1}
 				onChangePage={handleChangePage}
 				onChangeRowsPerPage={handleChangeRowsPerPage}
+			/>
+			<Notify
+				notify={notify}
+				handleClose={() =>
+					setNotify((prevValue: NotificationType) => ({
+						...prevValue,
+						open: false,
+					}))
+				}
 			/>
 		</Paper>
 	);

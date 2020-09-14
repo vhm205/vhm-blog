@@ -1,5 +1,5 @@
 import api from './api';
-import { getToken, setHeaderToken } from '../utils';
+import { getToken } from '../utils';
 
 type DataCategory = Omit<CategoryField, 'message' | '_id'>;
 type DataPost = Omit<PostField, 'message' | '_id'>;
@@ -30,6 +30,11 @@ export default class CmsAPI {
 	}
 	static deleteCategories(data: string[]) {
 		return api.delete('/cms/delete-categories', {
+			data: data,
+		});
+	}
+	static deletePosts(data: string[]) {
+		return api.delete('/cms/delete-posts', {
 			data: data,
 		});
 	}
