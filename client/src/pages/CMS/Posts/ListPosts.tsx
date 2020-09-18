@@ -18,7 +18,7 @@ import { useCommonStyles } from '../../../styles/commonStyle';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface ColumnPost {
-	id: 'stt' | 'title' | 'slug' | 'date' | 'edit';
+	id: 'stt' | 'title' | 'slug' | 'date' | 'update' | 'edit';
 	label: string;
 	minWidth?: number;
 	maxWidth?: number;
@@ -30,6 +30,7 @@ const columns: ColumnPost[] = [
 	{ id: 'title', label: 'Title', align: 'left', minWidth: 100 },
 	{ id: 'slug', label: 'Slug', align: 'left', minWidth: 100 },
 	{ id: 'date', label: 'Date Created', align: 'left', minWidth: 100 },
+	{ id: 'update', label: 'Date Updated', align: 'left', minWidth: 100 },
 	{ id: 'edit', label: 'Edit', align: 'left', minWidth: 30 },
 ];
 
@@ -170,6 +171,10 @@ const ListPosts: React.FC<RouteComponentProps> = ({ history }) => {
 								<TableCell align="left">{post.slug}</TableCell>
 								<TableCell align="left">
 									{new Date(post.createdAt as number).toLocaleString()}
+								</TableCell>
+								<TableCell align="left">
+									{post.updatedAt &&
+										new Date(post.updatedAt as number).toLocaleString()}
 								</TableCell>
 								<TableCell>
 									<IconButton

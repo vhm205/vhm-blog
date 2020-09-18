@@ -24,6 +24,9 @@ CategorySchema.statics = {
 	getTotalCategories() {
 		return this.countDocuments({});
 	},
+	updateCategory(id, data) {
+		return this.updateOne({ _id: id }, { $set: data });
+	},
 	deleteCategories(listId) {
 		return this.deleteMany({ _id: { $in: listId } });
 	},

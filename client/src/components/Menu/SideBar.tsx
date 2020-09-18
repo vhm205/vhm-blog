@@ -65,7 +65,7 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 						</ListItemIcon>
 						<ListItemText primary="Add Post" />
 					</ListItem>
-					<ListItem button onClick={() => history.push('/add-category')}>
+					<ListItem button onClick={() => history.push('/category')}>
 						<ListItemIcon>
 							<AddCircleOutline />
 						</ListItemIcon>

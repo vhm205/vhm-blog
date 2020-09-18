@@ -10,12 +10,18 @@ import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import EditIcon from '@material-ui/icons/Edit';
 import CmsAPI from '../../../services/cmsService';
 import ToolBarTable from '../components/ToolBarTable';
 import { Notify } from '../../../components';
 
+interface ListCategoriesProps {
+	handleEdit: (category: CategoryField) => void;
+}
+
 interface ColumnCategory {
-	id: 'stt' | 'name' | 'slug' | 'date';
+	id: 'stt' | 'name' | 'slug' | 'date' | 'update' | 'edit';
 	label: string;
 	minWidth?: number;
 	align?: 'right' | 'left' | 'center';
@@ -26,9 +32,11 @@ const columns: ColumnCategory[] = [
 	{ id: 'name', label: 'Name', align: 'left', minWidth: 100 },
 	{ id: 'slug', label: 'Slug', align: 'left', minWidth: 100 },
 	{ id: 'date', label: 'Date Created', align: 'left', minWidth: 100 },
+	{ id: 'update', label: 'Date Updated', align: 'left', minWidth: 100 },
+	{ id: 'edit', label: 'Edit', align: 'left', minWidth: 30 },
 ];
 
-const ListCategories: React.FC = () => {
+const ListCategories: React.FC<ListCategoriesProps> = ({ handleEdit }) => {
 	const classes = useStyles();
 	const [listId, setListId] = useState<string[]>([]);
 	const [numSelected, setNumSelected] = useState<number>(0);
@@ -168,6 +176,20 @@ const ListCategories: React.FC = () => {
 								<TableCell align="left">{category.slug}</TableCell>
 								<TableCell align="left">
 									{new Date(category.createdAt as number).toLocaleString()}
+								</TableCell>
+								<TableCell align="left">
+									{category.updatedAt &&
+										new Date(category.updatedAt as number).toLocaleString()}
+								</TableCell>
+								<TableCell>
+									<IconButton
+										aria-label="edit"
+										onClick={() => {
+											handleEdit(category);
+										}}
+									>
+										<EditIcon />
+									</IconButton>
 								</TableCell>
 							</TableRow>
 						))}
