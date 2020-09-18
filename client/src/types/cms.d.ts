@@ -20,6 +20,7 @@ interface PostField {
 	slug: string;
 	author?: string;
 	createdAt?: number;
+	updatedAt?: number;
 	message?: string;
 }
 
@@ -29,5 +30,6 @@ interface CategoryField {
 	slug: string;
 	parentId?: number;
 	createdAt?: number;
+	updatedAt?: number;
 	message?: string;
 }

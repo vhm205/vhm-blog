@@ -39,6 +39,9 @@ export default class CmsAPI {
 	static getAllCategories() {
 		return api.get('/cms/all-categories');
 	}
+	static updateCategory(data: DataCategory & { id: string }) {
+		return api.patch(`/cms/update-category`, data);
+	}
 	static deleteCategories(data: string[]) {
 		return api.delete('/cms/delete-categories', {
 			data: data,

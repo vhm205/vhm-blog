@@ -15,6 +15,7 @@ type TextBoxProps = FieldAttributes<{}> &
 	TextFieldProps & {
 		placeholder?: string;
 		type?: string;
+		style?: any;
 		disabled?: boolean;
 		pattern?: RegExp | string;
 		onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -22,7 +23,16 @@ type TextBoxProps = FieldAttributes<{}> &
 
 export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 	(
-		{ placeholder, type, variant, disabled, pattern, onChange, ...props },
+		{
+			placeholder,
+			type,
+			style,
+			variant,
+			disabled,
+			pattern,
+			onChange,
+			...props
+		},
 		ref
 	) => {
 		const [field, meta] = useField<{}>(props);
@@ -34,13 +44,13 @@ export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 				ref={ref}
 				autoComplete="off"
 				variant="outlined"
-				type={type ? type : 'text'}
-				style={{ marginTop: 10 }}
-				disabled={disabled ? disabled : false}
 				placeholder={placeholder}
 				helperText={errStr}
-				inputProps={pattern ? { pattern } : {}}
 				error={!!errStr}
+				style={{ marginTop: 10, ...style }}
+				type={type ? type : 'text'}
+				disabled={disabled ? disabled : false}
+				inputProps={pattern ? { pattern } : {}}
 				onChange={onChange ? onChange : field.onChange}
 				fullWidth
 			/>

@@ -10,6 +10,7 @@ const {
 	addCategory,
 	getCategories,
 	getAllCategories,
+	updateCategory,
 	deleteCategories,
 } = require('../controllers/cms.controller');
 
@@ -21,6 +22,7 @@ router.post(
 );
 router.get('/get-categories/:page', auth.authToken, getCategories);
 router.get('/all-categories', auth.authToken, getAllCategories);
+router.patch('/update-category', auth.authToken, updateCategory);
 router.delete('/delete-categories', auth.authToken, deleteCategories);
 
 router.post('/add-post', auth.authToken, validate(postSchema), addPost);

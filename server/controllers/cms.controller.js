@@ -49,6 +49,20 @@ const getAllCategories = async (_, res) => {
 	}
 };
 
+const updateCategory = async (req, res) => {
+	try {
+		const { id, name, slug } = req.body;
+		await CategoryModel.updateCategory(id, {
+			name: name,
+			slug: slug,
+			updatedAt: Date.now(),
+		});
+		return res.sendStatus(200);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const deleteCategories = async (req, res) => {
 	try {
 		await CategoryModel.deleteCategories(req.body);
@@ -138,5 +152,6 @@ module.exports = {
 	addCategory,
 	getCategories,
 	getAllCategories,
+	updateCategory,
 	deleteCategories,
 };
