@@ -15,6 +15,9 @@ export const useCommonStyles = makeStyles((theme: Theme) => ({
 		paddingTop: theme.spacing(1),
 		paddingLeft: theme.spacing(10),
 	},
+	minCard: {
+		minWidth: 275,
+	},
 	btnSubmit: {
 		marginTop: 10,
 	},

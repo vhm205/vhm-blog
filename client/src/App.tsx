@@ -27,7 +27,7 @@ const App: React.FC = () => {
 			<UserProvider>
 				<Menu />
 				<Switch>
-					<PublicRoute path="/" exact component={Home} />
+					<Route path="/" exact component={Home} />
 					<PublicRoute path="/category/:category" component={Home} />
 					<PublicRoute path="/login" component={Login} />
 					<PublicRoute path="/register" component={Register} />

@@ -101,6 +101,9 @@ export const getPosition = async () => {
 	console.log(position);
 };
 
+export const getRandomItem = (arr: Array<any>) =>
+	arr[Math.floor(Math.random() * arr.length)];
+
 export const slugify = (text: string, separator: string = '-') =>
 	text
 		.toString()
