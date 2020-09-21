@@ -11,8 +11,7 @@ const Menu: React.FC = () => {
 	const classes = useStyles();
 	const [open, setOpen] = useState(false);
 
-	const handleDrawerOpen = (open: boolean) => setOpen(open);
-	const handleDrawerClose = (open: boolean) => setOpen(open);
+	const handleDrawerOpenClose = (open: boolean) => setOpen(open);
 
 	return (
 		<div className={classes.root}>
@@ -21,13 +20,13 @@ const Menu: React.FC = () => {
 				classes={classes}
 				open={open}
 				isAuthenticated={isAuthenticated}
-				handleDrawerOpen={handleDrawerOpen}
+				handleDrawerOpen={handleDrawerOpenClose}
 			/>
 			{isAuthenticated ? (
 				<SideBar
 					classes={classes}
 					open={open}
-					handleDrawerClose={handleDrawerClose}
+					handleDrawerClose={handleDrawerOpenClose}
 				/>
 			) : null}
 			<div className={classes.toolbar} />
@@ -97,7 +96,7 @@ const useStyles = makeStyles((theme: Theme) =>
 		},
 		btnActive: {
 			'&.active': {
-				backgroundColor: '#303f9f',
+				backgroundColor: '#bcbbbb',
 			},
 		},
 	})

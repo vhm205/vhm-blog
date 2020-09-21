@@ -5,7 +5,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import Avatar from '@material-ui/core/Avatar';
 import Menu from '@material-ui/core/Menu';
@@ -16,6 +15,7 @@ import { NavLink } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { config } from '../../config/app';
 import { logout, checkSocialAccount } from '../../utils';
+import ShowCategory from './ShowCategory';
 
 interface NavBarProps {
 	classes: any;
@@ -35,6 +35,7 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 		return (
 			<AppBar
 				position="fixed"
+				color="transparent"
 				className={
 					isAuthenticated
 						? clsx(classes.appBar, {
@@ -63,28 +64,9 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 						VHM Blog
 					</Typography>
 					{!isAuthenticated ? (
-						<>
-							<Button
-								className={classes.btnActive}
-								color="primary"
-								variant="contained"
-								component={NavLink}
-								to="/login"
-							>
-								Login
-							</Button>
-							<Button
-								className={classes.btnActive}
-								color="primary"
-								variant="contained"
-								component={NavLink}
-								to="/register"
-							>
-								Register
-							</Button>
-						</>
+						<ShowCategory classes={classes} />
 					) : (
-						<>
+						<div>
 							{profile.user ? (
 								<Fab variant="extended" color="default" onClick={handleMenu}>
 									{profile.user.avatar ? (
@@ -103,7 +85,7 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 											style={{ marginRight: 10 }}
 										/>
 									)}
-									{profile.user?.username}
+									{profile.user.username}
 								</Fab>
 							) : null}
 							<Menu
@@ -129,7 +111,7 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 								</MenuItem>
 								<MenuItem onClick={logout}>Log out</MenuItem>
 							</Menu>
-						</>
+						</div>
 					)}
 				</Toolbar>
 			</AppBar>
