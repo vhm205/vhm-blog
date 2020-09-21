@@ -92,6 +92,15 @@ export const formatToHumanTime = (timestamp: number | undefined) => {
 	return moment(timestamp).locale('vi').startOf('seconds').fromNow();
 };
 
+export const getPosition = async () => {
+	// async/await works in functions only (for now)
+	const result = await new Promise((resolve, reject) => {
+		navigator.geolocation.getCurrentPosition(resolve, reject);
+	});
+	const position = await result;
+	console.log(position);
+};
+
 export const slugify = (text: string, separator: string = '-') =>
 	text
 		.toString()

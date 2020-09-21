@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { PublicRoute, PrivateRoute } from './routers';
 
 // Components
@@ -7,6 +7,8 @@ import { Menu } from './components';
 import { NotFound } from './components/errors';
 
 // Pages
+import Home from './pages/Main/Home';
+
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import Profile from './pages/Profile/Profile';
@@ -25,6 +27,8 @@ const App: React.FC = () => {
 			<UserProvider>
 				<Menu />
 				<Switch>
+					<PublicRoute path="/" exact component={Home} />
+					<PublicRoute path="/category/:category" component={Home} />
 					<PublicRoute path="/login" component={Login} />
 					<PublicRoute path="/register" component={Register} />
 					<PrivateRoute exact path="/profile" component={Profile} />
@@ -36,7 +40,7 @@ const App: React.FC = () => {
 					<PrivateRoute path="/edit-post/:post_id" component={EditPost} />
 					<PrivateRoute path="/all-posts" component={AllPosts} />
 					<PrivateRoute path="/category" component={Category} />
-					<PublicRoute component={NotFound} />
+					<Route component={NotFound} />
 				</Switch>
 				<GlobalStyle />
 			</UserProvider>

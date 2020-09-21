@@ -114,11 +114,13 @@ const logOut = async (req, res) => {
 	try {
 		const token = req.header('authorization') || req.query.access_token;
 		const user = await checkRefreshToken(token);
+		console.log(token);
 		if (!user) return res.status(400).json({ message: "Token doesn't exist" });
 
 		await UserModel.removeAllToken(user._id, user.local.email);
 		return res.sendStatus(204);
 	} catch (error) {
+		console.error(error);
 		return res.status(400).json(error);
 	}
 };
