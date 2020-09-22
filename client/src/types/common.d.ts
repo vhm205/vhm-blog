@@ -1,3 +1,6 @@
+type Gender = 'Male' | 'Female';
+type responseWithMessage = AxiosResponse & { message: string };
+
 type ErrorType =
 	| {
 			message: string;

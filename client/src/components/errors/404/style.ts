@@ -27,10 +27,12 @@ export const Container = styled.div`
 `;
 
 export const Link = styled.a`
-	color: #fff;
+	color: rgba(128, 255, 128, 0.8);
+	font-weight: bold;
+	font-size: 25px;
 	text-decoration: none;
 	&:before {
-		content: '[';
+		content: ' [';
 	}
 	&::after {
 		content: ']';

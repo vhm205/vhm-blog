@@ -15,17 +15,15 @@ import { NavLink } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { config } from '../../config/app';
 import { logout, checkSocialAccount } from '../../utils';
-import ShowCategory from './ShowCategory';
 
 interface NavBarProps {
 	classes: any;
 	open: boolean;
-	isAuthenticated: boolean;
 	handleDrawerOpen: (open: boolean) => void;
 }
 
 const NavBar: React.FC<NavBarProps> = React.memo(
-	({ classes, open, isAuthenticated, handleDrawerOpen }) => {
+	({ classes, open, handleDrawerOpen }) => {
 		const profile = useUser();
 		const [anchorEl, setAnchorEl] = useState(null);
 
@@ -35,14 +33,9 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 		return (
 			<AppBar
 				position="fixed"
-				color="transparent"
-				className={
-					isAuthenticated
-						? clsx(classes.appBar, {
-								[classes.appBarShift]: open,
-						  })
-						: ''
-				}
+				className={clsx(classes.appBar, {
+					[classes.appBarShift]: open,
+				})}
 			>
 				<Toolbar>
 					<IconButton
@@ -50,44 +43,33 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 						aria-label="open drawer"
 						onClick={() => handleDrawerOpen(true)}
 						edge="start"
-						className={
-							isAuthenticated
-								? clsx(classes.menuButton, {
-										[classes.hide]: open,
-								  })
-								: ''
-						}
+						className={clsx(classes.menuButton, {
+							[classes.hide]: open,
+						})}
 					>
 						<MenuIcon />
 					</IconButton>
 					<Typography variant="h6" noWrap className={classes.title}>
 						VHM Blog
 					</Typography>
-					{!isAuthenticated ? (
-						<ShowCategory classes={classes} />
-					) : (
-						<div>
-							{profile.user ? (
-								<Fab variant="extended" color="default" onClick={handleMenu}>
-									{profile.user.avatar ? (
-										<Avatar
-											alt="Avatar NavBar"
-											src={
-												checkSocialAccount(profile.user)
-													? (profile.user.avatar as string)
-													: `${config.API_URL}/images/${profile.user.avatar}`
-											}
-											style={{ marginRight: 10 }}
-										/>
-									) : (
-										<AccountCircle
-											fontSize="large"
-											style={{ marginRight: 10 }}
-										/>
-									)}
-									{profile.user.username}
-								</Fab>
-							) : null}
+					{profile.user && (
+						<>
+							<Fab variant="extended" color="default" onClick={handleMenu}>
+								{profile.user.avatar ? (
+									<Avatar
+										alt="Avatar NavBar"
+										src={
+											checkSocialAccount(profile.user)
+												? (profile.user.avatar as string)
+												: `${config.API_URL}/images/${profile.user.avatar}`
+										}
+										style={{ marginRight: 10 }}
+									/>
+								) : (
+									<AccountCircle fontSize="large" style={{ marginRight: 10 }} />
+								)}
+								{profile.user.username}
+							</Fab>
 							<Menu
 								anchorEl={anchorEl}
 								anchorOrigin={{
@@ -111,7 +93,7 @@ const NavBar: React.FC<NavBarProps> = React.memo(
 								</MenuItem>
 								<MenuItem onClick={logout}>Log out</MenuItem>
 							</Menu>
-						</div>
+						</>
 					)}
 				</Toolbar>
 			</AppBar>
