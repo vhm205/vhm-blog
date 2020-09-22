@@ -8,7 +8,9 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
+import Typography, { TypographyProps } from '@material-ui/core/Typography';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 type TextBoxProps = FieldAttributes<{}> &
 	ClassAttributes<HTMLInputElement> &
@@ -84,6 +86,25 @@ export const RadioGroupWithLabel: React.FC<
 
 export const Alert = (props: AlertProps) => {
 	return <MuiAlert elevation={6} variant="filled" {...props} />;
+};
+
+export const Loading: React.FC<{ variants: TypographyProps['variant'][] }> = ({
+	variants,
+}) => {
+	return (
+		<div>
+			{variants.map((variant) => (
+				<Typography
+					component="div"
+					key={variant}
+					variant={variant}
+					gutterBottom
+				>
+					<Skeleton />
+				</Typography>
+			))}
+		</div>
+	);
 };
 
 export const ComboBox = (data: Pick<CategoryField, 'name'>[]) => {

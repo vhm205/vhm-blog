@@ -3,8 +3,9 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { PublicRoute, PrivateRoute } from './routers';
 
 // Components
-import { Menu } from './components';
+import { Menu as MenuCMS } from './components';
 import { NotFound } from './components/errors';
+import Menu from './pages/Main/components/Menu';
 
 // Pages
 import Home from './pages/Main/Home';
@@ -20,12 +21,13 @@ import Category from './pages/CMS/Categories/Category';
 
 import { UserProvider } from './context/UserContext';
 import { GlobalStyle } from './styles/globalStyle';
+import { isAuthenticated } from './utils';
 
 const App: React.FC = () => {
 	return (
 		<Router>
 			<UserProvider>
-				<Menu />
+				{isAuthenticated ? <MenuCMS /> : <Menu />}
 				<Switch>
 					<Route path="/" exact component={Home} />
 					<PublicRoute path="/category/:category" component={Home} />

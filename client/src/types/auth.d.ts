@@ -1,5 +1,3 @@
-type Gender = 'Male' | 'Female';
-type responseWithMessage = AxiosResponse & { message: string };
 type responseLogin = AxiosResponse & {
 	token: string;
 	refreshToken: string;

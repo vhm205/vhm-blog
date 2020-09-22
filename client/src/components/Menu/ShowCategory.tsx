@@ -26,7 +26,7 @@ const ShowCategory: React.FC<{ classes: any }> = ({ classes }) => {
 					className={classes.btnActive}
 					component={NavLink}
 					variant="contained"
-					color="inherit"
+					color="primary"
 					to={`/category/${category.name}`}
 				>
 					{category.name}
@@ -37,8 +37,8 @@ const ShowCategory: React.FC<{ classes: any }> = ({ classes }) => {
 		<div>
 			<Button
 				className={classes.btnActive}
-				color="inherit"
-				variant="outlined"
+				color="primary"
+				variant="contained"
 				component={NavLink}
 				to="/login"
 			>
@@ -46,8 +46,8 @@ const ShowCategory: React.FC<{ classes: any }> = ({ classes }) => {
 			</Button>
 			<Button
 				className={classes.btnActive}
-				color="inherit"
-				variant="outlined"
+				color="primary"
+				variant="contained"
 				component={NavLink}
 				to="/register"
 			>
