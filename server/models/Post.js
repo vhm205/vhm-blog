@@ -6,6 +6,7 @@ const PostSchema = new mongoose.Schema({
 	category: { type: String, required: true },
 	slug: { type: String, required: true },
 	author: { type: String, default: 'Admin' },
+	view: { type: Number, default: 0 },
 	createdAt: { type: Number, default: Date.now },
 	updatedAt: { type: Number, default: null },
 });
