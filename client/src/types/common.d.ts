@@ -1,4 +1,5 @@
 type Gender = 'Male' | 'Female';
+type FormatTimeType = 'date' | 'time' | 'datetime' | 'human';
 type responseWithMessage = AxiosResponse & { message: string };
 
 type ErrorType =

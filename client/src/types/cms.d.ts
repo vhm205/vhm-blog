@@ -19,6 +19,7 @@ interface PostField {
 	category: string;
 	slug: string;
 	author?: string;
+	view?: number;
 	createdAt?: number;
 	updatedAt?: number;
 	message?: string;

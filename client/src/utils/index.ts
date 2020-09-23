@@ -87,10 +87,41 @@ export const validImage = (file: File): { status: string; message: string } => {
 export const handleErrors = (errors: ErrorType) =>
 	'message' in errors ? errors.message : errors.errors[0];
 
+export const formatDateTime = (
+	timestamp: number | undefined,
+	type: FormatTimeType = 'date'
+) => {
+	if (!timestamp) return '';
+
+	switch (type) {
+		case 'date':
+			return new Date(timestamp).toLocaleDateString();
+		case 'time':
+			return new Date(timestamp).toLocaleTimeString();
+		case 'datetime':
+			return new Date(timestamp).toLocaleString();
+		default:
+			break;
+	}
+};
+
 export const formatToHumanTime = (timestamp: number | undefined) => {
 	if (!timestamp) return '';
 	return moment(timestamp).locale('vi').startOf('seconds').fromNow();
 };
+
+export const formatHtmlToText = (html: string, maxCharacter: number = 200) => {
+	const span: HTMLSpanElement = document.createElement('span');
+	span.innerHTML = html;
+	const textContent: string | null = span.textContent;
+	if (textContent && textContent.length > maxCharacter) {
+		return `${textContent.substr(0, maxCharacter)}...`;
+	}
+	return `${span.textContent}...`;
+};
+
+export const getRandomItem = (arr: Array<any>) =>
+	arr[Math.floor(Math.random() * arr.length)];
 
 export const getPosition = async () => {
 	// async/await works in functions only (for now)
@@ -100,9 +131,6 @@ export const getPosition = async () => {
 	const position = await result;
 	console.log(position);
 };
-
-export const getRandomItem = (arr: Array<any>) =>
-	arr[Math.floor(Math.random() * arr.length)];
 
 export const slugify = (text: string, separator: string = '-') =>
 	text
