@@ -7,6 +7,7 @@ const PostSchema = new mongoose.Schema({
 	slug: { type: String, required: true },
 	author: { type: String, default: 'Admin' },
 	view: { type: Number, default: 0 },
+	rating: [{ _id: false, type: Number, default: 0 }],
 	createdAt: { type: Number, default: Date.now },
 	updatedAt: { type: Number, default: null },
 });
@@ -19,13 +20,22 @@ PostSchema.statics = {
 		return this.findOne({ $or: [{ title }, { content }] });
 	},
 	getPosts(skip, limit) {
-		return this.find({}).skip(skip).limit(limit).sort({ createdAt: 1 });
+		return this.find({}).skip(skip).limit(limit).sort({ createdAt: -1 });
 	},
 	getTotalPosts() {
 		return this.countDocuments({});
 	},
+	getTotalPostsByCategory(category) {
+		return this.countDocuments({ category });
+	},
 	getPostById(id) {
 		return this.findOne({ _id: id });
+	},
+	getPostsByCategory(category, skip, limit) {
+		return this.find({ category })
+			.skip(skip)
+			.limit(limit)
+			.sort({ createdAt: -1 });
 	},
 	updatePost(id, data) {
 		return this.updateOne({ _id: id }, { $set: data });

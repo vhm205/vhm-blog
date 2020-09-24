@@ -40,7 +40,7 @@ const Menu: React.FC = () => {
 										className={classes.btnActive}
 										component={NavLink}
 										variant="contained"
-										color="default"
+										color="primary"
 										to={`/category/${category.name}`}
 									>
 										{category.name}

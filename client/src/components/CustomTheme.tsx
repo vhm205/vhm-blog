@@ -14,11 +14,11 @@ const themeDark = createMuiTheme({
 				fontWeight: 'bolder',
 			},
 		},
-		MuiButton: {
-			colorInherit: {
-				color: 'red',
-			},
-		},
+		// MuiButton: {
+		// 	colorInherit: {
+		// 		color: 'red',
+		// 	},
+		// },
 	},
 });
 

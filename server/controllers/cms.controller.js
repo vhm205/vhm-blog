@@ -107,12 +107,48 @@ const getPosts = async (req, res) => {
 	}
 };
 
+const getPostsByCategory = async (req, res) => {
+	try {
+		const currentPage = +req.params.page;
+		const category = req.params.category;
+		const skip = currentPage * LIMIT_POSTS - LIMIT_POSTS;
+
+		const totalPosts = await PostModel.getTotalPostsByCategory(category);
+		const getPostsByCategory = await PostModel.getPostsByCategory(
+			category,
+			skip,
+			LIMIT_POSTS
+		);
+
+		return res.status(200).json({
+			posts: getPostsByCategory,
+			total: totalPosts,
+			page: currentPage,
+			perPage: LIMIT_POSTS,
+		});
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const getPostById = async (req, res) => {
 	try {
 		const postId = req.params.post_id;
 		const post = await PostModel.getPostById(postId);
 
 		return res.status(200).json(post);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+const getPostsRelated = async (req, res) => {
+	try {
+		const postsRelated = await PostModel.aggregate([
+			{ $match: { category: req.params.category } },
+			{ $sample: { size: 6 } },
+		]);
+
+		return res.status(200).json(postsRelated);
 	} catch (error) {
 		return res.status(400).json(error);
 	}
@@ -146,6 +182,8 @@ const deletePosts = async (req, res) => {
 module.exports = {
 	addPost,
 	getPosts,
+	getPostsRelated,
+	getPostsByCategory,
 	getPostById,
 	updatePost,
 	deletePosts,
