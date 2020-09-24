@@ -25,6 +25,12 @@ export default class CmsAPI {
 	static getPostById(postId: string) {
 		return api.get(`/cms/get-post/${postId}`);
 	}
+	static getPostByCategory(page: number, category: string) {
+		return api.get(`/cms/get-posts-by-category/${category}/${page}`);
+	}
+	static getPostsRelated(category: string) {
+		return api.get(`/cms/get-posts-related/${category}`);
+	}
 	static updatePost(data: DataPost & { id: string }) {
 		return api.patch(`/cms/update-post`, data);
 	}

@@ -23,7 +23,10 @@ const Post: React.FC<PostProps> = ({ color, post }) => {
 					{post.author}
 				</Typography>
 				<Typography variant="h5" component="h2">
-					<NavLink to="/post" style={{ color }}>
+					<NavLink
+						to={`/${post.category}/${post.slug}-${post._id}`}
+						style={{ color }}
+					>
 						{post.title}
 					</NavLink>
 				</Typography>

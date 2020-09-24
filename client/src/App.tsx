@@ -9,6 +9,7 @@ import Menu from './pages/Main/components/Menu';
 
 // Pages
 import Home from './pages/Main/Home';
+import PostDetail from './pages/Main/PostDetail';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
@@ -30,7 +31,8 @@ const App: React.FC = () => {
 				{isAuthenticated ? <MenuCMS /> : <Menu />}
 				<Switch>
 					<Route path="/" exact component={Home} />
-					<PublicRoute path="/category/:category" component={Home} />
+					<PublicRoute path="/category/:category" exact component={Home} />
+					<PublicRoute path="/:category/:slug" exact component={PostDetail} />
 					<PublicRoute path="/login" component={Login} />
 					<PublicRoute path="/register" component={Register} />
 					<PrivateRoute exact path="/profile" component={Profile} />
