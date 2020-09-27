@@ -9,6 +9,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 
 // Routes
+const mainRoute = require('./routes/main');
 const userRoute = require('./routes/users');
 const cmsRoute = require('./routes/cms');
 
@@ -34,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
+app.use('/main', mainRoute);
 app.use('/users', userRoute);
 app.use('/cms', cmsRoute);
 

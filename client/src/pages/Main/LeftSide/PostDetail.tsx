@@ -8,9 +8,10 @@ import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useParams, NavLink } from 'react-router-dom';
-import { formatDateTime } from '../../utils';
+import { formatDateTime } from '../../../utils';
 import RelatedPosts from './RelatedPosts';
-import CmsAPI from '../../services/cmsService';
+import Comment from './Comment';
+import CmsAPI from '../../../services/cmsService';
 
 const labels: { [index: string]: string } = {
 	0.5: 'Useless',
@@ -43,9 +44,7 @@ const PostDetail: React.FC = () => {
 				);
 				setPost(resultPost);
 				setPostsRelated(resultPostsRelated);
-			} catch (error) {
-				console.error(error, error.response);
-			}
+			} catch {}
 		})();
 	}, [slug]);
 
@@ -94,9 +93,14 @@ const PostDetail: React.FC = () => {
 								<Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>
 							)}
 						</div>
+						<Comment postId={post._id} />
 					</Paper>
 					<Paper className={classes.paper}>
-						<Typography variant="h4" gutterBottom>
+						<Typography
+							variant="h4"
+							gutterBottom
+							className={classes.postRelated}
+						>
 							Những bài viết liên quan
 						</Typography>
 						<Grid container spacing={2}>
@@ -129,9 +133,16 @@ const useStyles = makeStyles((theme: Theme) => ({
 		display: 'flex',
 		alignItems: 'center',
 		marginTop: theme.spacing(5),
+		marginBottom: theme.spacing(5),
 	},
 	avatar: {
 		backgroundColor: red[500],
+	},
+	postRelated: {
+		borderBottom: '5px solid rgba(0,0,0,.5)',
+		maxWidth: theme.spacing(50),
+		paddingBottom: theme.spacing(1),
+		marginBottom: theme.spacing(3),
 	},
 }));
 

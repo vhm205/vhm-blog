@@ -20,6 +20,8 @@ type TextBoxProps = FieldAttributes<{}> &
 		style?: any;
 		disabled?: boolean;
 		pattern?: RegExp | string;
+		multiline?: boolean;
+		rows?: number;
 		onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 	};
 
@@ -27,11 +29,13 @@ export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 	(
 		{
 			placeholder,
-			type,
+			type = 'text',
 			style,
 			variant,
-			disabled,
 			pattern,
+			disabled = false,
+			multiline = false,
+			rows,
 			onChange,
 			...props
 		},
@@ -46,12 +50,14 @@ export const TextBox = React.forwardRef<HTMLInputElement, TextBoxProps>(
 				ref={ref}
 				autoComplete="off"
 				variant="outlined"
+				multiline={multiline}
+				rows={rows}
 				placeholder={placeholder}
 				helperText={errStr}
 				error={!!errStr}
 				style={{ marginTop: 10, ...style }}
-				type={type ? type : 'text'}
-				disabled={disabled ? disabled : false}
+				type={type}
+				disabled={disabled}
 				inputProps={pattern ? { pattern } : {}}
 				onChange={onChange ? onChange : field.onChange}
 				fullWidth

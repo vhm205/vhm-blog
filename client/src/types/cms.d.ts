@@ -11,6 +11,7 @@ type responsePosts = AxiosResponse & PostsResponse;
 
 type responsePost = AxiosResponse & PostField;
 type responseCategory = AxiosResponse & CategoryField;
+type responseComment = AxiosResponse & CommentField;
 
 interface PostField {
 	_id: string;
@@ -33,4 +34,11 @@ interface CategoryField {
 	createdAt?: number;
 	updatedAt?: number;
 	message?: string;
+}
+
+interface CommentField {
+	_id?: string;
+	email: string;
+	content: string;
+	postId: string;
 }

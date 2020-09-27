@@ -23,7 +23,7 @@ import { config } from '../../config/app';
 import { useParams } from 'react-router-dom';
 import { Notify } from '../../components';
 import cookie from 'react-cookies';
-import * as profileSchema from '../../validations/profile';
+import * as profileSchema from '../../validations/auth/user';
 import UserAPI from '../../services/userService';
 
 let initValues: Omit<User, 'id' | 'role'> = {
