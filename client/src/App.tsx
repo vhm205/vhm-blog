@@ -9,7 +9,7 @@ import Menu from './pages/Main/components/Menu';
 
 // Pages
 import Home from './pages/Main/Home';
-import PostDetail from './pages/Main/PostDetail';
+import PostDetail from './pages/Main/LeftSide/PostDetail';
 
 import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
