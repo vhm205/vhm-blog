@@ -6,8 +6,13 @@ type PostsResponse = {
 	posts: Array<PostField>;
 } & PaginationType;
 
+type CommentsResponse = {
+	comments: Array<CommentField>;
+} & PaginationType;
+
 type responseCategories = AxiosResponse & CategoriesResponse;
 type responsePosts = AxiosResponse & PostsResponse;
+type responseComments = AxiosResponse & CommentsResponse;
 
 type responsePost = AxiosResponse & PostField;
 type responseCategory = AxiosResponse & CategoryField;
@@ -21,6 +26,7 @@ interface PostField {
 	slug: string;
 	author?: string;
 	view?: number;
+	rating?: number;
 	createdAt?: number;
 	updatedAt?: number;
 	message?: string;
@@ -41,4 +47,6 @@ interface CommentField {
 	email: string;
 	content: string;
 	postId: string;
+	reply?: string;
+	createdAt?: number;
 }

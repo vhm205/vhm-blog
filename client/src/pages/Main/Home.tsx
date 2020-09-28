@@ -50,11 +50,7 @@ const Home: React.FC = () => {
 	);
 
 	useEffect(() => {
-		const abort = new AbortController();
 		getPosts(pagination.page);
-		return () => {
-			abort.abort();
-		};
 	}, [getPosts, pagination.page]);
 
 	const handleNextPage = (_: object, page: number) => getPosts(page);

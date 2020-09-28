@@ -170,6 +170,19 @@ const updatePost = async (req, res) => {
 	}
 };
 
+const updateRating = async (req, res) => {
+	try {
+		const { rating, _id } = req.body;
+		const getRating = await PostModel.getRating(_id);
+		await PostModel.updatePost(_id, {
+			rating: [...getRating.rating, rating],
+		});
+		return res.sendStatus(200);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const deletePosts = async (req, res) => {
 	try {
 		await PostModel.deletePosts(req.body);
@@ -186,6 +199,7 @@ module.exports = {
 	getPostsByCategory,
 	getPostById,
 	updatePost,
+	updateRating,
 	deletePosts,
 	addCategory,
 	getCategories,

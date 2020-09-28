@@ -37,6 +37,9 @@ PostSchema.statics = {
 			.limit(limit)
 			.sort({ createdAt: -1 });
 	},
+	getRating(id) {
+		return this.findOne({ _id: id }, { rating: 1, _id: 0 });
+	},
 	updatePost(id, data) {
 		return this.updateOne({ _id: id }, { $set: data });
 	},

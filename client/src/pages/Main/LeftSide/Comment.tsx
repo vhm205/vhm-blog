@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Formik, Form } from 'formik';
 import { commentSchema } from '../../../validations/main';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { TextBox } from '../../../components/CustomField';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
+import TablePagination from '@material-ui/core/TablePagination';
 import ShowComment from './ShowComment';
 import MainAPI from '../../../services/mainService';
-
-interface CommentProps {
-	postId: string;
-}
 
 const initValues: CommentField = {
 	email: '',
@@ -18,9 +15,40 @@ const initValues: CommentField = {
 	postId: '',
 };
 
-const Comment: React.FC<CommentProps> = React.memo(({ postId }) => {
+const Comment: React.FC<{ postId: string }> = React.memo(({ postId }) => {
 	const classes = useStyles();
-	const [comment, setComment] = useState<CommentField>();
+	const [pagination, setPagination] = useState<CommentsResponse>({
+		comments: [],
+		page: 1,
+		perPage: 5,
+		total: 0,
+	});
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const { page, perPage } = pagination;
+				const result: responseComments = await (perPage !== -1
+					? MainAPI.getCommentsByPostId(postId, page, perPage)
+					: MainAPI.getAllComments(postId));
+				setPagination(result);
+			} catch {}
+		})();
+	}, [pagination.page, pagination.perPage]);
+
+	const handleChangePage = (_: unknown, newPage: number) => {
+		setPagination((prevValue) => ({ ...prevValue, page: newPage + 1 }));
+	};
+
+	const handleChangeRowsPerPage = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setPagination((prevValue) => ({
+			...prevValue,
+			page: 1,
+			perPage: +event.target.value,
+		}));
+	};
 
 	return (
 		<div>
@@ -29,13 +57,18 @@ const Comment: React.FC<CommentProps> = React.memo(({ postId }) => {
 				validationSchema={commentSchema}
 				onSubmit={async (values, { resetForm }) => {
 					try {
-						values.postId = postId;
-						await MainAPI.addComment(values);
-						setComment(values);
+						const { email, content } = values;
+						const result: responseComment = await MainAPI.addComment({
+							email: email,
+							content: content,
+							postId: postId,
+						});
+						setPagination((preValue) => ({
+							...preValue,
+							comments: [result.comment, ...pagination.comments],
+						}));
 						resetForm();
-					} catch (error) {
-						console.error(error, error.response);
-					}
+					} catch {}
 				}}
 			>
 				{({ handleSubmit, handleChange, isSubmitting }) => (
@@ -62,7 +95,22 @@ const Comment: React.FC<CommentProps> = React.memo(({ postId }) => {
 				)}
 			</Formik>
 			<List className={classes.root}>
-				<ShowComment classes={classes} />
+				{pagination.comments.length > 0 && (
+					<Fragment>
+						{pagination.comments.map((comment) => (
+							<ShowComment key={comment._id} comment={comment} />
+						))}
+						<TablePagination
+							rowsPerPageOptions={[5, 10, 25, 50, { value: -1, label: 'All' }]}
+							component="div"
+							count={pagination.total}
+							rowsPerPage={pagination.perPage}
+							page={pagination.page - 1}
+							onChangePage={handleChangePage}
+							onChangeRowsPerPage={handleChangeRowsPerPage}
+						/>
+					</Fragment>
+				)}
 			</List>
 		</div>
 	);

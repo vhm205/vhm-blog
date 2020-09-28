@@ -8,12 +8,12 @@ import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useParams, NavLink } from 'react-router-dom';
-import { formatDateTime } from '../../../utils';
+import { formatDateTime, findMinMax } from '../../../utils';
 import RelatedPosts from './RelatedPosts';
 import Comment from './Comment';
 import CmsAPI from '../../../services/cmsService';
 
-const labels: { [index: string]: string } = {
+const ratings: { [index: string]: string } = {
 	0.5: 'Useless',
 	1: 'Useless+',
 	1.5: 'Poor',
@@ -31,7 +31,7 @@ const PostDetail: React.FC = () => {
 	const { category, slug } = useParams();
 	const [post, setPost] = useState<PostField>();
 	const [postsRelated, setPostsRelated] = useState<PostField[]>();
-	const [value, setValue] = React.useState<number | null>(2);
+	const [rating, setRating] = React.useState<number | null>(3);
 	const [hover, setHover] = React.useState(-1);
 
 	useEffect(() => {
@@ -42,11 +42,28 @@ const PostDetail: React.FC = () => {
 				const resultPostsRelated: responsePost = await CmsAPI.getPostsRelated(
 					resultPost.category
 				);
+
+				if (resultPost.rating.length) {
+					const [_, max] = findMinMax(resultPost.rating);
+					setRating(max);
+				}
 				setPost(resultPost);
 				setPostsRelated(resultPostsRelated);
 			} catch {}
 		})();
 	}, [slug]);
+
+	const changeRating = async (_: unknown, newValue: number | null) => {
+		if (!newValue) return;
+
+		try {
+			await CmsAPI.updateRating({
+				_id: post?._id,
+				rating: newValue,
+			});
+			setRating(newValue);
+		} catch {}
+	};
 
 	return post ? (
 		<Box className={classes.box} m={2}>
@@ -79,18 +96,15 @@ const PostDetail: React.FC = () => {
 						<div className={classes.rating}>
 							<Rating
 								name="hover-feedback"
-								value={value}
+								value={rating}
 								precision={0.5}
-								onChange={(_, newValue) => {
-									console.log(newValue);
-									setValue(newValue);
-								}}
+								onChange={changeRating}
 								onChangeActive={(_, newHover) => {
 									setHover(newHover);
 								}}
 							/>
-							{value && (
-								<Box ml={2}>{labels[hover !== -1 ? hover : value]}</Box>
+							{rating && (
+								<Box ml={2}>{ratings[hover !== -1 ? hover : rating]}</Box>
 							)}
 						</div>
 						<Comment postId={post._id} />

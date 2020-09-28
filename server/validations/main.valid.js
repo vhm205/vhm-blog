@@ -5,8 +5,9 @@ const commentSchema = Joi.object({
 		minDomainSegments: 2,
 		tlds: { allow: ['com', 'net'] },
 	}),
-	content: Joi.string().min(5).max(100).required(),
+	content: Joi.string().min(5).max(500).required(),
 	postId: Joi.string().required(),
+	createdAt: Joi.number().optional(),
 });
 
 module.exports = {

@@ -8,6 +8,7 @@ const {
 	getPostsRelated,
 	getPostById,
 	updatePost,
+	updateRating,
 	deletePosts,
 	addCategory,
 	getCategories,
@@ -37,6 +38,7 @@ router.get(
 router.get('/get-posts-related/:category', auth.authToken, getPostsRelated);
 router.get('/get-post/:post_id', auth.authToken, getPostById);
 router.patch('/update-post', auth.authToken, updatePost);
+router.put('/update-rating', updateRating);
 router.delete('/delete-posts', auth.authToken, deletePosts);
 
 module.exports = router;

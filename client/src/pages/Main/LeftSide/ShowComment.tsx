@@ -4,13 +4,14 @@ import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import { formatToHumanTime } from '../../../utils';
 
 interface ShowCommentProps {
-	classes: any;
+	comment: CommentField;
 }
 
-const ShowComment: React.FC<ShowCommentProps> = ({ classes }) => {
+const ShowComment: React.FC<ShowCommentProps> = ({ comment }) => {
 	return (
 		<Fragment>
 			<ListItem alignItems="flex-start">
@@ -18,40 +19,22 @@ const ShowComment: React.FC<ShowCommentProps> = ({ classes }) => {
 					<Avatar>G</Avatar>
 				</ListItemAvatar>
 				<ListItemText
-					primary="Brunch this weekend?"
-					secondary={
+					primary={
 						<Fragment>
-							<Typography
-								component="span"
-								variant="body2"
-								className={classes.inline}
-								color="textPrimary"
-							>
-								Ali Connors
-							</Typography>
-							{" — I'll be in your neighborhood doing errands this…"}
+							{comment.email}{' '}
+							<span style={{ opacity: '.5', fontSize: 14 }}>
+								- {formatToHumanTime(comment.createdAt)}
+							</span>
 						</Fragment>
 					}
-				/>
-			</ListItem>
-			<Divider variant="inset" component="li" />
-			<ListItem alignItems="flex-start" style={{ marginLeft: 50 }}>
-				<ListItemAvatar>
-					<Avatar>G</Avatar>
-				</ListItemAvatar>
-				<ListItemText
-					primary="Brunch this weekend?"
 					secondary={
 						<Fragment>
-							<Typography
-								component="span"
-								variant="body2"
-								className={classes.inline}
-								color="textPrimary"
-							>
-								Ali Connors
-							</Typography>
-							{" — I'll be in your neighborhood doing errands this…"}
+							<span style={{ display: 'block', marginBottom: 3 }}>
+								{comment.content}
+							</span>
+							<Button color="primary" variant="outlined" size="small">
+								Reply
+							</Button>
 						</Fragment>
 					}
 				/>
