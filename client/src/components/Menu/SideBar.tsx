@@ -44,7 +44,7 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 			>
 				<div className={classes.toolbar}>
 					<IconButton onClick={() => handleDrawerClose(false)}>
-						{theme.direction === 'rtl' ? (
+						{theme.direction !== 'rtl' ? (
 							<ChevronRightIcon />
 						) : (
 							<ChevronLeftIcon />

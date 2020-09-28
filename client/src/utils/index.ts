@@ -120,6 +120,14 @@ export const formatHtmlToText = (html: string, maxCharacter: number = 200) => {
 	return `${span.textContent}...`;
 };
 
+export const findMinMax = (arr: Array<number>) => {
+	// const max =  Math.max.apply(null, arr);
+	// const min =  Math.min.apply(null, arr);
+	const min = arr.reduce((a, b) => Math.min(a, b), Infinity);
+	const max = arr.reduce((a, b) => Math.max(a, b), -Infinity);
+	return [min, max];
+};
+
 export const getRandomItem = (arr: Array<any>) =>
 	arr[Math.floor(Math.random() * arr.length)];
 
