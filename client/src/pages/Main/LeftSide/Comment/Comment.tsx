@@ -1,19 +1,11 @@
 import React, { useState, useEffect, Fragment } from 'react';
-import { Formik, Form } from 'formik';
-import { commentSchema } from '../../../validations/main';
+import { FormikHelpers } from 'formik';
 import { makeStyles, Theme } from '@material-ui/core/styles';
-import { TextBox } from '../../../components/CustomField';
 import List from '@material-ui/core/List';
-import Button from '@material-ui/core/Button';
 import TablePagination from '@material-ui/core/TablePagination';
+import MainAPI from '../../../../services/mainService';
 import ShowComment from './ShowComment';
-import MainAPI from '../../../services/mainService';
-
-const initValues: CommentField = {
-	email: '',
-	content: '',
-	postId: '',
-};
+import FormComment from './FormComment';
 
 const Comment: React.FC<{ postId: string }> = React.memo(({ postId }) => {
 	const classes = useStyles();
@@ -34,7 +26,7 @@ const Comment: React.FC<{ postId: string }> = React.memo(({ postId }) => {
 				setPagination(result);
 			} catch {}
 		})();
-	}, [pagination.page, pagination.perPage]);
+	}, [pagination.page, pagination.perPage, postId]);
 
 	const handleChangePage = (_: unknown, newPage: number) => {
 		setPagination((prevValue) => ({ ...prevValue, page: newPage + 1 }));
@@ -50,55 +42,37 @@ const Comment: React.FC<{ postId: string }> = React.memo(({ postId }) => {
 		}));
 	};
 
+	const handleSubmit = async (
+		values: CommentField,
+		{ resetForm }: FormikHelpers<CommentField>
+	) => {
+		try {
+			const { email, content } = values;
+			const result: responseComment = await MainAPI.addComment({
+				email: email,
+				content: content,
+				postId: postId,
+			});
+			setPagination((preValue) => ({
+				...preValue,
+				comments: [result.comment, ...pagination.comments],
+			}));
+			resetForm();
+		} catch {}
+	};
+
 	return (
 		<div>
-			<Formik
-				initialValues={initValues}
-				validationSchema={commentSchema}
-				onSubmit={async (values, { resetForm }) => {
-					try {
-						const { email, content } = values;
-						const result: responseComment = await MainAPI.addComment({
-							email: email,
-							content: content,
-							postId: postId,
-						});
-						setPagination((preValue) => ({
-							...preValue,
-							comments: [result.comment, ...pagination.comments],
-						}));
-						resetForm();
-					} catch {}
-				}}
-			>
-				{({ handleSubmit, handleChange, isSubmitting }) => (
-					<Form onSubmit={handleSubmit} className={classes.root}>
-						<TextBox name="email" placeholder="Your email" />
-						<TextBox
-							placeholder="Your comment"
-							name="content"
-							multiline
-							rows={5}
-							style={{ marginTop: 10 }}
-						/>
-						<Button
-							type="submit"
-							variant="contained"
-							color="primary"
-							disabled={isSubmitting}
-							className={classes.button}
-							onChange={handleChange}
-						>
-							Send
-						</Button>
-					</Form>
-				)}
-			</Formik>
+			<FormComment classes={classes} handleSubmit={handleSubmit} />
 			<List className={classes.root}>
 				{pagination.comments.length > 0 && (
 					<Fragment>
 						{pagination.comments.map((comment) => (
-							<ShowComment key={comment._id} comment={comment} />
+							<ShowComment
+								key={comment._id}
+								comment={comment}
+								classes={classes}
+							/>
 						))}
 						<TablePagination
 							rowsPerPageOptions={[5, 10, 25, 50, { value: -1, label: 'All' }]}
@@ -134,10 +108,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 	button: {
 		marginTop: theme.spacing(1),
 		maxWidth: 200,
-		// alignSelf: 'flex-start',
 	},
 	inline: {
 		display: 'inline',
+	},
+	content: {
+		display: 'block',
+		marginBottom: theme.spacing(1),
+	},
+	readerTitle: {
+		opacity: '.5',
+		fontSize: 14,
+	},
+	form: {
+		margin: theme.spacing(-2, 0, 2, 9),
 	},
 }));
 

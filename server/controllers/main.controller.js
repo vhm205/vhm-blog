@@ -36,14 +36,38 @@ const getComments = async (req, res) => {
 	}
 };
 
+const getCommentsByReply = async (req, res) => {
+	try {
+		const { postId, listId, commentId, page } = req.body;
+		const skip = page * LIMIT_COMMENTS - LIMIT_COMMENTS;
+
+		const totalComments = await CommentModel.getTotalReplyByComment(
+			postId,
+			commentId
+		);
+		const getCommentsByReply = await CommentModel.getCommentsByReply(
+			postId,
+			listId,
+			skip,
+			LIMIT_COMMENTS
+		);
+
+		return res.status(200).json({
+			comments: getCommentsByReply,
+			total: totalComments,
+			page: page,
+			perPage: LIMIT_COMMENTS,
+		});
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const getAllComments = async (req, res) => {
 	try {
 		const postId = req.params.post_id;
 		const totalComments = await CommentModel.getTotalComments(postId);
-		const getAllComments = await CommentModel.getAllComments(
-			postId,
-			LIMIT_COMMENTS
-		);
+		const getAllComments = await CommentModel.getAllComments(postId);
 
 		return res.status(200).json({
 			comments: getAllComments,
@@ -56,8 +80,21 @@ const getAllComments = async (req, res) => {
 	}
 };
 
+const updateComment = async (req, res) => {
+	try {
+		const { commentId, listId } = req.body;
+		await CommentModel.updateComment(commentId, listId);
+
+		return res.sendStatus(200);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 module.exports = {
 	addComment,
 	getComments,
 	getAllComments,
+	getCommentsByReply,
+	updateComment,
 };

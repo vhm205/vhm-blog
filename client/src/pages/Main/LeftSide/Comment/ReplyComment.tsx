@@ -4,39 +4,30 @@ import Divider from '@material-ui/core/Divider';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import { formatToHumanTime } from '../../../utils';
+import { formatToHumanTime } from '../../../../utils';
 
-interface ShowCommentProps {
+interface ReplyCommentProps {
+	classes: any;
 	comment: CommentField;
 }
 
-const ShowComment: React.FC<ShowCommentProps> = ({ comment }) => {
+const ReplyComment: React.FC<ReplyCommentProps> = ({ comment, classes }) => {
 	return (
 		<Fragment>
-			<ListItem alignItems="flex-start">
+			<ListItem alignItems="flex-start" style={{ marginLeft: 50 }}>
 				<ListItemAvatar>
-					<Avatar>G</Avatar>
+					<Avatar>C</Avatar>
 				</ListItemAvatar>
 				<ListItemText
 					primary={
 						<Fragment>
 							{comment.email}{' '}
-							<span style={{ opacity: '.5', fontSize: 14 }}>
+							<span className={classes.readerTitle}>
 								- {formatToHumanTime(comment.createdAt)}
 							</span>
 						</Fragment>
 					}
-					secondary={
-						<Fragment>
-							<span style={{ display: 'block', marginBottom: 3 }}>
-								{comment.content}
-							</span>
-							<Button color="primary" variant="outlined" size="small">
-								Reply
-							</Button>
-						</Fragment>
-					}
+					secondary={comment.content}
 				/>
 			</ListItem>
 			<Divider variant="inset" component="li" />
@@ -44,4 +35,4 @@ const ShowComment: React.FC<ShowCommentProps> = ({ comment }) => {
 	);
 };
 
-export default ShowComment;
+export default ReplyComment;

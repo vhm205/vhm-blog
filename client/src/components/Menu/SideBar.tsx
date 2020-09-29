@@ -1,6 +1,5 @@
 import React from 'react';
 import clsx from 'clsx';
-import { useTheme } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
@@ -14,6 +13,7 @@ import PostAdd from '@material-ui/icons/PostAdd';
 import AddCircleOutline from '@material-ui/icons/AddCircleOutline';
 import ExitToApp from '@material-ui/icons/ExitToApp';
 import AllInclusiveIcon from '@material-ui/icons/AllInclusive';
+import { useTheme } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { logout } from '../../utils';
 
@@ -23,10 +23,29 @@ interface SideBarProps {
 	handleDrawerClose: (open: boolean) => void;
 }
 
+const items: { title: string; url: string; children: JSX.Element }[] = [
+	{ title: 'All Posts', url: '/all-posts', children: <AllInclusiveIcon /> },
+	{ title: 'Add Post', url: '/add-post', children: <PostAdd /> },
+	{ title: 'Add Category', url: '/category', children: <AddCircleOutline /> },
+];
+
+const Navigate: React.FC<{ url: string; title: string }> = ({
+	url,
+	title,
+	children,
+}) => {
+	const history = useHistory();
+	return (
+		<ListItem button onClick={() => history.push(url)}>
+			<ListItemIcon>{children}</ListItemIcon>
+			<ListItemText primary={title} />
+		</ListItem>
+	);
+};
+
 const SideBar: React.FC<SideBarProps> = React.memo(
 	({ classes, open, handleDrawerClose }) => {
 		const theme = useTheme();
-		const history = useHistory();
 
 		return (
 			<Drawer
@@ -44,7 +63,7 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 			>
 				<div className={classes.toolbar}>
 					<IconButton onClick={() => handleDrawerClose(false)}>
-						{theme.direction !== 'rtl' ? (
+						{theme.direction === 'rtl' ? (
 							<ChevronRightIcon />
 						) : (
 							<ChevronLeftIcon />
@@ -53,24 +72,11 @@ const SideBar: React.FC<SideBarProps> = React.memo(
 				</div>
 				<Divider />
 				<List>
-					<ListItem button onClick={() => history.push('/all-posts')}>
-						<ListItemIcon>
-							<AllInclusiveIcon />
-						</ListItemIcon>
-						<ListItemText primary="All Posts" />
-					</ListItem>
-					<ListItem button onClick={() => history.push('/add-post')}>
-						<ListItemIcon>
-							<PostAdd />
-						</ListItemIcon>
-						<ListItemText primary="Add Post" />
-					</ListItem>
-					<ListItem button onClick={() => history.push('/category')}>
-						<ListItemIcon>
-							<AddCircleOutline />
-						</ListItemIcon>
-						<ListItemText primary="Add Category" />
-					</ListItem>
+					{items.map((value) => (
+						<Navigate key={value.url} title={value.title} url={value.url}>
+							{value.children}
+						</Navigate>
+					))}
 				</List>
 				<Divider />
 				<List>
