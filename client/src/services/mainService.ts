@@ -21,4 +21,23 @@ export default class CmsAPI {
 	static getAllComments(postId: string) {
 		return api.get(`${CmsAPI.path}/get-all-comments/${postId}`);
 	}
+	static getCommentsByReply(
+		commentId: string,
+		postId: string,
+		listId: Array<string>,
+		page: number
+	) {
+		return api.post(`${CmsAPI.path}/get-comments-by-reply`, {
+			commentId,
+			postId,
+			listId,
+			page,
+		});
+	}
+	static updateComment(commentId: string, listId: Array<string>) {
+		return api.patch(`${CmsAPI.path}/update-comment`, {
+			listId,
+			commentId,
+		});
+	}
 }

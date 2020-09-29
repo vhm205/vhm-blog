@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavLink } from 'react-router-dom';
-import { formatDateTime, formatHtmlToText } from '../../../utils';
+import { formatDateTime, formatHtmlToText } from '../../../../utils';
 
 interface PostProps {
 	post: PostField;

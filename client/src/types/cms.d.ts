@@ -43,10 +43,11 @@ interface CategoryField {
 }
 
 interface CommentField {
-	_id?: string;
+	_id: string;
 	email: string;
 	content: string;
 	postId: string;
-	reply?: string;
+	reply?: Array<string | undefined>;
+	status?: string;
 	createdAt?: number;
 }

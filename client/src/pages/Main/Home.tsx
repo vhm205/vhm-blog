@@ -8,7 +8,7 @@ import { NavLink, useParams } from 'react-router-dom';
 import { useCommonStyles } from '../../styles/commonStyle';
 import { Loading } from '../../components/CustomField';
 import CmsAPI from '../../services/cmsService';
-import Post from './LeftSide/Post';
+import Post from './LeftSide/Post/Post';
 import RightSide from './RightSide/RightSide';
 
 const variants = ['h2', 'body1', 'h5', 'body2'] as TypographyProps['variant'][];

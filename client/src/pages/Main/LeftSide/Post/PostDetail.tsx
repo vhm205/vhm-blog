@@ -8,10 +8,10 @@ import Rating from '@material-ui/lab/Rating';
 import { red } from '@material-ui/core/colors';
 import { makeStyles, Theme } from '@material-ui/core/styles';
 import { useParams, NavLink } from 'react-router-dom';
-import { formatDateTime, findMinMax } from '../../../utils';
+import { formatDateTime, findMinMax } from '../../../../utils';
 import RelatedPosts from './RelatedPosts';
-import Comment from './Comment';
-import CmsAPI from '../../../services/cmsService';
+import Comment from '../Comment/Comment';
+import CmsAPI from '../../../../services/cmsService';
 
 const ratings: { [index: string]: string } = {
 	0.5: 'Useless',
@@ -44,7 +44,7 @@ const PostDetail: React.FC = () => {
 				);
 
 				if (resultPost.rating.length) {
-					const [_, max] = findMinMax(resultPost.rating);
+					const [, max] = findMinMax(resultPost.rating);
 					setRating(max);
 				}
 				setPost(resultPost);
@@ -68,7 +68,7 @@ const PostDetail: React.FC = () => {
 	return post ? (
 		<Box className={classes.box} m={2}>
 			<Grid container justify="center">
-				<Grid item xs={12} md={10}>
+				<Grid item xs={12} sm={12} md={8}>
 					<Breadcrumbs aria-label="breadcrumb">
 						<NavLink color="inherit" to="/">
 							Home
@@ -133,9 +133,7 @@ const PostDetail: React.FC = () => {
 
 const useStyles = makeStyles((theme: Theme) => ({
 	box: {
-		padding: theme.spacing(8),
-		paddingTop: theme.spacing(1),
-		paddingLeft: theme.spacing(10),
+		paddingTop: theme.spacing(2),
 	},
 	paper: {
 		marginTop: theme.spacing(2),
