@@ -32,8 +32,8 @@ CommentSchema.statics = {
 	getTotalComments(postId) {
 		return this.countDocuments({ postId, status: 'parent' });
 	},
-	getTotalReplyByComment(postId, commentId) {
-		return this.countDocuments({ _id: commentId, postId });
+	getTotalReplyByComment(commentId, postId) {
+		return this.findOne({ _id: commentId, postId }, { reply: 1 });
 	},
 	updateComment(commentId, listId) {
 		return this.findOneAndUpdate(
@@ -46,6 +46,7 @@ CommentSchema.statics = {
 			}
 		);
 	},
+	getMoreCommentReply() {},
 };
 
 module.exports = mongoose.model('Comment', CommentSchema);
