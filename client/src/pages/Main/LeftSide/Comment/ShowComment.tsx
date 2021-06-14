@@ -20,6 +20,7 @@ interface ShowCommentProps {
 const ShowComment: React.FC<ShowCommentProps> = React.memo(
 	({ comment, classes }) => {
 		const [openComment, setOpenComment] = useState<boolean>(false);
+		const [totalPage, setTotalPage] = useState<number>(0);
 		const [pagination, setPagination] = useState<CommentsResponse>({
 			comments: [],
 			page: 1,
@@ -27,22 +28,26 @@ const ShowComment: React.FC<ShowCommentProps> = React.memo(
 			total: 0,
 		});
 
-		useEffect(() => {
-			(async () => {
-				const { _id, postId, reply } = comment;
-				if (reply?.length) {
-					try {
-						const result: responseComments = await MainAPI.getCommentsByReply(
-							_id,
-							postId,
-							reply as string[],
-							pagination.page
-						);
-						setPagination(result);
-					} catch {}
-				}
-			})();
+		const loadReplyComments = React.useCallback(async () => {
+			const { _id, postId, reply } = comment;
+			if (reply?.length) {
+				try {
+					const result: responseComments = await MainAPI.getCommentsByReply(
+						_id,
+						postId,
+						reply as string[],
+						pagination.page
+					);
+					const totalPage = Math.ceil(result.total / result.perPage);
+					setTotalPage(totalPage);
+					setPagination(result);
+				} catch {}
+			}
 		}, [comment, pagination.page]);
+
+		useEffect(() => {
+			loadReplyComments();
+		}, []);
 
 		const handleSubmit = async (
 			values: CommentField,
@@ -114,6 +119,9 @@ const ShowComment: React.FC<ShowCommentProps> = React.memo(
 					pagination.comments.map((cmt) => (
 						<ReplyComment key={cmt._id} comment={cmt} classes={classes} />
 					))}
+				{pagination.comments.length < pagination.total && (
+					<Button onClick={loadReplyComments}>See More</Button>
+				)}
 			</Fragment>
 		);
 	}

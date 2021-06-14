@@ -34,6 +34,19 @@ export default class CmsAPI {
 			page,
 		});
 	}
+	static getMoreCommentsReply(
+		commentId: string,
+		postId: string,
+		listId: Array<string>,
+		page: number
+	) {
+		return api.post(`${CmsAPI.path}/get-more-comments-reply`, {
+			commentId,
+			postId,
+			listId,
+			page,
+		});
+	}
 	static updateComment(commentId: string, listId: Array<string>) {
 		return api.patch(`${CmsAPI.path}/update-comment`, {
 			listId,

@@ -42,8 +42,8 @@ const getCommentsByReply = async (req, res) => {
 		const skip = page * LIMIT_COMMENTS - LIMIT_COMMENTS;
 
 		const totalComments = await CommentModel.getTotalReplyByComment(
-			postId,
-			commentId
+			commentId,
+			postId
 		);
 		const getCommentsByReply = await CommentModel.getCommentsByReply(
 			postId,
@@ -54,7 +54,7 @@ const getCommentsByReply = async (req, res) => {
 
 		return res.status(200).json({
 			comments: getCommentsByReply,
-			total: totalComments,
+			total: totalComments.reply.length,
 			page: page,
 			perPage: LIMIT_COMMENTS,
 		});
@@ -80,6 +80,14 @@ const getAllComments = async (req, res) => {
 	}
 };
 
+const getMoreCommentReply = async (req, res) => {
+	try {
+		console.log(req.body);
+	} catch (error) {
+		return res.status(400).json(error);
+	}
+};
+
 const updateComment = async (req, res) => {
 	try {
 		const { commentId, listId } = req.body;
@@ -96,5 +104,6 @@ module.exports = {
 	getComments,
 	getAllComments,
 	getCommentsByReply,
+	getMoreCommentReply,
 	updateComment,
 };
